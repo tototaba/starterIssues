@@ -1,0 +1,37 @@
+licenses:
+  - MIT
+  - Apache-2.0
+  - CC0-1.0
+  - BSD-3-Clause
+  - BSD-2-Clause
+  - ISC
+  - (MIT OR Apache-2.0)
+  - CC-BY-4.0
+  - BSD*
+  - BSD
+  - (Apache-2.0 OR MPL-1.1)
+  - Public Domain
+  - WTFPL
+  - (BSD-3-Clause OR GPL-2.0)
+  - (MIT AND Zlib)
+  - (WTFPL OR MIT)
+  - (BSD-2-Clause OR MIT OR Apache-2.0)
+  - MIT*
+  - (MIT AND BSD-3-Clause)
+  - CC-BY-3.0
+  - Unlicense
+  - (MIT OR CC0-1.0)
+  - 0BSD
+  - UNLICENSED
+  - 'Custom: http://www.ag-grid.com'
+  - BSD-3-Clause OR MIT
+  - MPL-2.0 OR Apache-2.0
+  - UNKNOWN
+  - 'Custom: https://github.com/tmcw/jsonlint'
+  - (MPL-2.0 OR Apache-2.0)
+  - 'Custom: https://img.shields.io/cdnjs/v/ag-grid'
+  - 'Custom: https://www.ag-grid.com'
+  - Hippocratic-2.1
+modules:
+  - json-schema@0.2.3
+  - univerus-starter@0.1.0

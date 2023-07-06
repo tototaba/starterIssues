@@ -1,0 +1,28 @@
+{
+  "mainMenu": {
+    "dashboard": "Tablero",
+    "skeleton": "esqueleto",
+    "admin": "Configuraciones",
+    "messages": "Mensajes",
+    "activities": "ocupaciones",
+    "help": "Hyuda",
+    "errorBoundary": "Límite de error"
+  },
+  "mainMenuAria": {
+    "collapseNavigation": "Contraer navegación",
+    "expandNavigation": "Expandir navegación"
+  },
+  "dashboard": {
+    "sectionOne": "Resumen de estadísticas de usuario",
+    "sectionTwo": "Lista de usuarios",
+    "cardOneTitle": "Tendencias de clientes",
+    "cardOneSubTitle": "Una revisión del crecimiento de clientes durante el último año hasta la fecha",
+    "cardOneSubLabel": "NUEVOS CLIENTES (YTD)",
+    "cardTwoTitle": "Transacciones anuales",
+    "cardTwoSubTitle": "Una revisión de las transacciones durante el último año hasta la fecha",
+    "cardTwoSubLabel": "ACTAS"
+  },
+  "admin": {
+    "profile-title": "Modificar perfil de usuario"
+  }
+}

@@ -1,0 +1,40 @@
+resources:
+  repositories:
+    - repository: self
+      type: git
+      ref: refs/heads/development
+
+jobs:
+  - job: Job_1
+    displayName: Getting VM Image
+    pool:
+      vmImage: ubuntu-20.04
+    steps:
+      - checkout: self
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '16.x'
+      - task: YarnInstaller@3
+        inputs:
+          versionSpec: '1.x'
+      - task: Yarn@3
+        displayName: 'Yarn Install'
+        inputs:
+          projectDirectory: .
+          arguments: install
+      - task: Yarn@3
+        displayName: 'Yarn Build'
+        inputs:
+          projectDirectory: .
+          arguments: 'build:development'
+      - task: ArchiveFiles@2
+        displayName: Archive Build
+        inputs:
+          rootFolderOrFile: build
+          includeRootFolder: false
+          archiveFile: build.zip
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Artifact: '
+        inputs:
+          PathtoPublish: build.zip
+          ArtifactName: ConstructionAssetsUI

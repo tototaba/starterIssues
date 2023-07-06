@@ -1,0 +1,28 @@
+{
+  "mainMenu": {
+    "dashboard": "Dashboard",
+    "skeleton": "Skeleton",
+    "admin": "Admin",
+    "messages": "Messages",
+    "activities": "Activities",
+    "errorBoundary": "Error Boundary",
+    "help": "Help"
+  },
+  "mainMenuAria": {
+    "collapseNavigation": "Collapse Navigation",
+    "expandNavigation": "Expand Navigation"
+  },
+  "dashboard": {
+    "sectionOne": "User statistical overview",
+    "sectionTwo": "User List",
+    "cardOneTitle": "Client Trends",
+    "cardOneSubTitle": "A review of customer growth over the past Year to Date",
+    "cardOneSubLabel": "(YTD)",
+    "cardTwoTitle": "Yearly Transactions",
+    "cardTwoSubTitle": "A review of transactions over the past Year to Date",
+    "cardTwoSubLabel": "TRANSACTIONS"
+  },
+  "admin": {
+    "profile-title": "Modify User Profile"
+  }
+}

@@ -1,0 +1,66 @@
+{
+	// Place your cps workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+	"React Import": {
+		"scope": "javascript,javascriptreact,typescriptreact",
+		"prefix": "react",
+		"body": [
+			"import React from 'react';",
+			""
+		],
+		"description": "Shortcut to import React in a file with a component"
+	},
+	"React Component": {
+		// @todo Separate definition for typescript
+		"scope": "javascript,javascriptreact,typescriptreact",
+		"prefix": "component",
+		"body": [
+			"/**",
+			" * $2",
+			" */",
+			"const ${1:${TM_FILENAME_BASE}} = () => {",
+			"  $0",
+			"}",
+			""
+		],
+		"description": "Prop-less React component boilerplate"
+	},
+	"React Component (w/props)": {
+		"scope": "javascript,javascriptreact,typescriptreact",
+		"prefix": "component+props",
+		"body": [
+			"/**",
+			" * $3",
+			" */",
+			"const ${1:${TM_FILENAME_BASE}} = props => {",
+			"  const { $2 } = props;",
+			"  $0",
+			"}",
+			""
+		],
+		"description": "React component boilerplate with props argument"
+	},
+	"React Component Default Export": {
+		"scope": "javascript,javascriptreact,typescriptreact",
+		"prefix": "expdef",
+		"body": [
+			"export default ${1:${TM_FILENAME_BASE}};",
+			""
+		],
+		"description": "Shortcut to add a default export for a react component"
+	}
+}

@@ -1,0 +1,28 @@
+{
+  "mainMenu": {
+    "dashboard": "Tableau de bord",
+    "skeleton": "squelette",
+    "admin": "Admin",
+    "messages": "Messages",
+    "activities": "Activités",
+    "help": "Aidez-moi",
+    "errorBoundary": "ELimite d'erreur"
+  },
+  "mainMenuAria": {
+    "collapseNavigation": "Réduire la navigation",
+    "expandNavigation": "Développer la navigation"
+  },
+  "dashboard": {
+    "sectionOne": "Aperçu statistique des utilisateurs",
+    "sectionTwo": "Liste d'utilisateur",
+    "cardOneTitle": "Tendances clients",
+    "cardOneSubTitle": "Un examen de la croissance des clients au cours de l'année écoulée",
+    "cardOneSubLabel": "NOUVEAUX CLIENTS (YTD)",
+    "cardTwoTitle": "Transactions annuelles",
+    "cardTwoSubTitle": "Un examen des transactions au cours de l'année écoulée",
+    "cardTwoSubLabel": "TRANSACTIONS"
+  },
+  "admin": {
+    "profile-title": "Modifier le profil utilisateur"
+  }
+}
