@@ -208,7 +208,7 @@ const Routes = () => {
                   {!isAuthenticated && IS_LOCAL_AUTH && (
                     <Route path="/login" exact component={LocalLogin} />
                   )}
-                  <PrivateRoute path="/" exact component={TestPage} />
+                  <PrivateRoute path="/" exact component={ProjectTest} />
                   <PrivateRoute path="/test" exact component={TestShell} />
 
                   <PrivateRoute path="/ProjectTest" exact component={ProjectTest} />
@@ -231,7 +231,7 @@ const Routes = () => {
                     exact
                     component={ProjectsPage}
                   />
-                 {/*  <PrivateRoute
+                  {/*  <PrivateRoute
                     path="/cps-projects"
                     exact
                     component={CPSProjects}                  
