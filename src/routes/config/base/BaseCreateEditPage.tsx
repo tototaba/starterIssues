@@ -52,7 +52,7 @@ const BaseCreateEditPage = <RecordType, Values extends FormikValues>({
   validationSchema = undefined,
 }: BaseCreateEditPageProps<RecordType, Values>) => {
   const classes = useStyles();
-  const formikBagRef = useRef<FormikBag<typeof initialValues, any>>();
+  const formikBagRef = useRef < FormikBag < typeof initialValues, any>> ();
 
   return (
     <SideSheet
@@ -61,10 +61,10 @@ const BaseCreateEditPage = <RecordType, Values extends FormikValues>({
       title={viewOnly ? viewTitle : current ? editTitle : createTitle}
       {...(!viewOnly
         ? {
-            buttonLabel: current ? 'Update' : 'Create',
-            onSubmit: () => formikBagRef.current?.submitForm(),
-            // enableSubmit: dirty && !isSubmitting
-          }
+          buttonLabel: current ? 'Update' : 'Create',
+          onSubmit: () => formikBagRef.current?.submitForm(),
+          // enableSubmit: dirty && !isSubmitting
+        }
         : {})}
       width={450}
     >
@@ -100,6 +100,7 @@ const BaseCreateEditPage = <RecordType, Values extends FormikValues>({
           });
         }}
       >
+
         {formikProps => {
           const {
             status: { error },

@@ -55,7 +55,6 @@ const ConstructionUnits = () => {
         handleChange={onTabChange}
       />
     );
-
   return selectedTab === 0 ? (
     <ConstructionUnitsView<AssemblyRecord>
       name="Active Projects"

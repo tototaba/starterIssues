@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { getWorkOrders, deleteWorkOrderById, getProjectsCPS } from '../../api/client';
@@ -9,7 +9,7 @@ import { useAxiosGet } from 'unity-fluent-library';
 import { BasePage } from '../config/base';
 import { useQuery, ApolloProvider } from '@apollo/client';
 import { useFleetQuery } from '../../api/query';
-import { 
+import {
   OpenPage,
   PrimaryActionHeader,
   SubHeaderAction,
@@ -50,26 +50,26 @@ const ProjectTest = () => {
   useEffect(() => {
     /* fetch('http://cps.test/jwt/test', { */
     fetch('http://localhost:53196/api/v4/melville/getAllMMProjects', {
-    method: 'GET',
-    /* headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      key1: 'value1',
-      key2: 'value2'
-    }) */
+      method: 'GET',
+      /* headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        key1: 'value1',
+        key2: 'value2'
+      }) */
     })
-    .then(response => {
-      console.log(response);
-      return response.json();
-    })
-    .then(data => {
-      console.log(data);
-      setNewData(data);
-    })
-    .catch(error => {
-      console.error(error);
-    });
+      .then(response => {
+        console.log(response);
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        setNewData(data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
   }, []);
 
   /* const [{ data: projectsData }, refetchCurrentTenant] : any =
@@ -80,56 +80,57 @@ const ProjectTest = () => {
       true
     ); */
 
-    console.log("New data", newData);
+  console.log("New data", newData);
 
-    const rawBody = JSON.stringify({
-      "AssetClass": "Univerus New Project",
-      "AssetId": "UNP",
-      "ScheduleName": "UNP123",
-      "ID": 3,
-      "ScheduleID": 0
+  const rawBody = JSON.stringify({
+    "AssetClass": "Univerus New Project",
+    "AssetId": "UNP",
+    "ScheduleName": "UNP123",
+    "ID": 3,
+    "ScheduleID": 0
   });
 
-    const handleSubmit = () => {
-        fetch('http://localhost:53196/api/v4/melville/action/insert_into_projects', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': '+kVf+tFW2UgI/VhD1P0nRbtDNLhDaHmM'
-        },
-        body: rawBody
-        })
-        .then(response => {
-          console.log(response);
-          return response.json();
-        })
-        .then(data => {
-          console.log(data);
-          setNewData(data);
-        })
-        .catch(error => {
-          console.error(error);
-        });
-      console.log("submitted");
-    }
+  const handleSubmit = () => {
+    fetch('http://localhost:53196/api/v4/melville/action/insert_into_projects', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '+kVf+tFW2UgI/VhD1P0nRbtDNLhDaHmM'
+      },
+      body: rawBody
+    })
+      .then(response => {
+        console.log(response);
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        setNewData(data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    console.log("submitted");
+  }
 
-    const mockGridOptions = {
-      defaultColDef: { resizable: true },
-      columnDefs: [
-        /* {
-          headerName: 'Column 1',
-          field: 'column1',
-          resizable: true,
-          sortable: true,
-        }, */
-        { field: 'code', headerName: 'Project #' },
-        { field: 'acronym', headerName: 'Project Short Code' },
-        { field: 'name', headerName: 'Project Name' },
-        { field: 'address', headerName: 'Address' },
-        { field: 'date_started', headerName: 'Date Started' },
-        { field: 'date_completed', headerName: 'Date Completed' },
-        { field: 'status', headerName: 'Status' },
-        { field: 'actions', cellRenderer: ActionsRenderer,
+  const mockGridOptions = {
+    defaultColDef: { resizable: true },
+    columnDefs: [
+      /* {
+        headerName: 'Column 1',
+        field: 'column1',
+        resizable: true,
+        sortable: true,
+      }, */
+      { field: 'code', headerName: 'Project #' },
+      { field: 'acronym', headerName: 'Project Short Code' },
+      { field: 'name', headerName: 'Project Name' },
+      { field: 'address', headerName: 'Address' },
+      { field: 'date_started', headerName: 'Date Started' },
+      { field: 'date_completed', headerName: 'Date Completed' },
+      { field: 'status', headerName: 'Status' },
+      {
+        field: 'actions', cellRenderer: ActionsRenderer,
         /* cellRendererParams: {
           openEditPage: enableEdit
             ? (data: RecordType) => setItemToEdit(data)
@@ -139,8 +140,8 @@ const ProjectTest = () => {
             : null,
           ...(rendererParams || {}),
         }, */  }
-      ],
-    };
+    ],
+  };
 
   return (
     <OpenPage
@@ -180,9 +181,9 @@ const ProjectTest = () => {
           </AmbientCard>
         }
       />
-    <AmbientCard fullWidth={true}>
-    <AmbientGridTemplate
-          title="Active Projects"
+      <AmbientCard fullWidth={true}>
+        <AmbientGridTemplate
+          title="hello world"
           enableCreate={false}
           fetchPath="/equipment"
           onClick={console.log("Clicked")}
@@ -199,7 +200,8 @@ const ProjectTest = () => {
             { field: 'date_started', headerName: 'Date Started' },
             { field: 'date_completed', headerName: 'Date Completed' },
             { field: 'status', headerName: 'Status' },
-            { field: 'actions', cellRenderer: ActionsRenderer,
+            {
+              field: 'actions', cellRenderer: ActionsRenderer,
             /* cellRendererParams: {
               openEditPage: enableEdit
                 ? (data: RecordType) => setItemToEdit(data)
@@ -212,8 +214,10 @@ const ProjectTest = () => {
           ]}
           //rowData={rowData}
           frameworkComponents={{ actionsRenderer: ActionsRenderer }}
-    />
-      {/* <AgTable
+        />
+
+
+        {/* <AgTable
             gridOptions={mockGridOptions}
             rowData={newData}
             api={gridApi}
@@ -225,8 +229,8 @@ const ProjectTest = () => {
               }}
             dynamicSizing
       /> */}
-    </AmbientCard>
-    <SubHeaderAction>
+      </AmbientCard>
+      <SubHeaderAction>
         <PrimaryActionHeader
           title={'Projects'}
           subheader={'Meeting Minutes Active Projects'}
@@ -249,8 +253,8 @@ const ProjectTest = () => {
               click: () => setDialogOpen(true),
             },
           ]}
-          /* search
-          seachField={FluentSearchField} */
+        /* search
+        seachField={FluentSearchField} */
         />
       </SubHeaderAction>
     </OpenPage>
