@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getAccessToken } from '../utils/apiHelpers';
+import { getAccessToken } from 'unity-fluent-library';
 
 /**
  * Extensions on Axios interfaces

@@ -1,8 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react';
-import { useAxiosGet } from '../../utils/useAxiosGet';
-import { useAuthedUser } from '../../utils/auth';
-import { InquiryContainer } from 'unity-fluent-library';
-import { apiMutate } from '../../utils/useAxiosMutate';
+import { useAxiosGet, useAuthedUser, InquiryContainer, apiMutate } from 'unity-fluent-library';
 import { ShellContext } from '../../contexts/ShellContext';
 import getWidget, { isValidWidget } from '../../dashboard/getWidget';
 

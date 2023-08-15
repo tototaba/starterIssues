@@ -9,7 +9,7 @@ import {
   UseMutationResult,
 } from 'react-query';
 import { AxiosResponse, AxiosError } from 'axios';
-import { useAuthedUser } from '../utils/auth';
+import { useAuthedUser } from 'unity-fluent-library';
 
 export type UseFleetMutationResult<
   Variables = unknown,

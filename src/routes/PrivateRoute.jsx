@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import { useIsUnityAuthenticated, useUser } from '../utils/auth';
+import { useIsUnityAuthenticated, useUser } from 'unity-fluent-library';
 import PageForbidden from '../UI/routing/PageForbiddenRoute';
 
 const IS_LOCAL_AUTH = process.env.REACT_APP_LOCAL_AUTH === 'true';

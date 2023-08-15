@@ -54,10 +54,9 @@ let CPSProjectPage = props => {
           {viewButton}
         </Button>
       </div>
-      { viewArchived ?
-        <CPSTableProject projects={archiveProjects} reloadRowData={reloadProjects} viewArchived={viewArchived} reloadArchivedProjects={reloadArchivedProjects} /> :
-        <CPSTableProject projects={projects} reloadRowData={reloadProjects} viewArchived={viewArchived} reloadArchivedProjects={reloadArchivedProjects} />
-      }
+      {/* { viewArchived ? */}
+         {/* <CPSTableProject projects={archiveProjects} reloadRowData={reloadProjects} viewArchived={viewArchived} reloadArchivedProjects={reloadArchivedProjects} /> : */}
+        {/* // <CPSTableProject projects={projects} reloadRowData={reloadProjects} viewArchived={viewArchived} reloadArchivedProjects={reloadArchivedProjects} /> */}
     </div>
   )
 };

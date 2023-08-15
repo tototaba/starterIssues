@@ -2,10 +2,9 @@ import React, { Suspense, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import Routes from './Routes';
-import { ThemeProvider } from './utils/theme';
 import { CssBaseline } from '@material-ui/core';
 import { PermissionContext } from './contexts/PermissionContext';
-import { AuthProviderWrapper } from './utils/auth';
+import { AuthProviderWrapper, ThemeProvider } from 'unity-fluent-library';
 import { storeInitialPath } from './utils/redirect/LocalRedirectUrlStorage';
 import { storeInitialTenant } from './utils/storage/UnitySessionStorage';
 

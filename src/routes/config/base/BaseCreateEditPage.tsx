@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { makeStyles, Theme, Grid } from '@material-ui/core';
-import { Formik, Form, FormikConfig, FormikProps, FormikBag } from 'formik';
+import { Formik, Form, FormikConfig, FormikProps, FormikBag, FormikValues } from 'formik';
 import { SideSheet } from 'unity-fluent-library';
 
 import { UseFleetMutationResult } from '../../../api/query';
@@ -36,7 +36,7 @@ interface BaseCreateEditPageProps<RecordType, Values> {
   validationSchema?: FormikConfig<Values>['validationSchema'];
 }
 
-const BaseCreateEditPage = <RecordType, Values>({
+const BaseCreateEditPage = <RecordType, Values extends FormikValues>({
   open,
   viewOnly = false,
   children,

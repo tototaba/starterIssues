@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "unity-fluent-library": {
+      "signature": "6d831a78c10de4c8ea2cc63149104379",
+      "file": true,
+      "replaced": "23.15.0"
+    }
+  }
+}

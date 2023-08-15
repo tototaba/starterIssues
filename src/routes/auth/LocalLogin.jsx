@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { LoginForm } from 'unity-fluent-library';
+import { LoginForm, useLocalUserActions } from 'unity-fluent-library';
 import axios from 'axios';
-import { useLocalUserActions } from '../../utils/auth/users';
 import { useHistory } from 'react-router-dom';
 import unityLogo from '../../assets/unitylogo.png';
 

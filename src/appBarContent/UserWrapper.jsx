@@ -3,8 +3,7 @@ import { Button, makeStyles, IconButton } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import MenuOpener from '../utils/MenuOpener';
 import UserAvatar from '../utils/UserAvatar';
-import { FluentProfileMenuCard } from 'unity-fluent-library';
-import { useSingleLogout } from '../utils/auth/useSingleLogout';
+import { FluentProfileMenuCard, useSingleLogout } from 'unity-fluent-library';
 
 const useStyles = makeStyles(theme => ({
   root: {},

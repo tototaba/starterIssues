@@ -3,11 +3,9 @@ import { Switch, Route, BrowserRouter as Router } from 'react-router-dom';
 import PageLoading from './UI/routing/PageLoading';
 import { mockMenus } from './mockData/mockData';
 import UserWrapper from './appBarContent/UserWrapper';
-import { useUser, useIsUnityAuthenticated } from './utils/auth';
+import { useUser, useIsUnityAuthenticated, useAxiosGet, useUserActions } from 'unity-fluent-library';
 import AppBarControls from './appBarContent/AppBarControls';
-import { useAxiosGet } from './utils/useAxiosGet';
 import AadCallback from './routes/callback/AadCallback';
-import { useUserActions } from './utils/auth/users';
 import { useTheme } from '@material-ui/core';
 import LoadingIndicator from './utils/LoadingIndicator';
 import { SnackbarProvider } from 'notistack';
@@ -17,12 +15,12 @@ import PrivateRoute from './routes/PrivateRoute';
 
 import ErrorBoundary from './ErrorBoundary';
 
-const PageNotFound = lazy(() => import('./UI/routing/PageNotFoundRoute.js'));
+const PageNotFound = lazy(() => import('./UI/routing/PageNotFoundRoute'));
 const LocalLogin = lazy(() => import('./routes/auth/LocalLogin'));
 const TestPage = lazy(() => import('./routes/test/TestPage'));
 const TestShell = lazy(() => import('./routes/test/TestShell'));
 const Inquiry = lazy(() => import('./routes/inquiry/Inquiry'));
-const WorkOrder = lazy(() => import('./routes/workOrder/WorkOrder'));
+// const WorkOrder = lazy(() => import('./routes/workOrder/WorkOrder'));
 /* const CPSProjects = lazy(() => import('./routes/config/ProjectSetup/CPSProjectDashboard')); */
 const ProjectsPage = lazy(() => import('./routes/config/ProjectSetup/ProjectPage'));
 const MeetingItem = lazy(() => import('./routes/config/meetingItem/MeetingItem'));
@@ -31,6 +29,7 @@ const WorkOrderView = lazy(() =>
 );
 const Estimate = lazy(() => import('./routes/estimate/Estimate'));
 const EstimateView = lazy(() => import('./routes/estimate/view/EstimateView'));
+// const MeetingSeriesPage = lazy(() => import('./dashboard/widgets/library/MeetingSeriesPage'));
 
 const ConstructionUnits = lazy(() =>
   import('./routes/config/constructionUnits/ConstructionUnits')
@@ -59,7 +58,7 @@ const WarehouseView = lazy(() =>
 
 
 /*CPS Routes */
-const ProjectTest = lazy(() => import('./routes/workOrder/ProjectTest'));
+// const ProjectTest = lazy(() => import('./routes/workOrder/ProjectTest'));
 const ArchiveProjectTest = lazy(() => import('./routes/workOrder/ArchiveProjectsTest'));
 /*---------CPS Routes */
 
@@ -102,7 +101,7 @@ const Routes = () => {
       process.env.REACT_APP_TENANTS_API_BASE,
       `tenants/${user?.currentTenantId}`,
       {},
-      true
+      !!!user?.id
     );
 
   const [{ data: userTenants }] = useAxiosGet(
@@ -208,10 +207,10 @@ const Routes = () => {
                   {!isAuthenticated && IS_LOCAL_AUTH && (
                     <Route path="/login" exact component={LocalLogin} />
                   )}
-                  <PrivateRoute path="/" exact component={ProjectTest} />
+                  <PrivateRoute path="/" exact component={ConstructionUnits} />
                   <PrivateRoute path="/test" exact component={TestShell} />
 
-                  <PrivateRoute path="/ProjectTest" exact component={ProjectTest} />
+                  {/* <PrivateRoute path="/ProjectTest" exact component={ProjectTest} /> */}
                   <PrivateRoute path="/ArchivedProjectTest" exact component={ArchiveProjectTest} />
 
 
@@ -221,11 +220,11 @@ const Routes = () => {
                     path="/inquiry/:id"
                     render={props => <Inquiry {...props} />}
                   />
-                  <PrivateRoute
+                  {/* <PrivateRoute
                     path="/project"
                     exact
                     component={WorkOrder}
-                  />
+                  /> */}
                   <PrivateRoute
                     path="/projects"
                     exact

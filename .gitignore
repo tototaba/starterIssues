@@ -121,3 +121,6 @@ build
 
 # Misc
 .DS_Store
+
+# Yalc
+.yalc
