@@ -29,11 +29,10 @@ const WorkOrderView = lazy(() =>
 );
 const Estimate = lazy(() => import('./routes/estimate/Estimate'));
 const EstimateView = lazy(() => import('./routes/estimate/view/EstimateView'));
-// const MeetingSeriesPage = lazy(() => import('./dashboard/widgets/library/MeetingSeriesPage'));
-
 const ConstructionUnits = lazy(() =>
   import('./routes/config/constructionUnits/ConstructionUnits')
 );
+const MeetingSeries = lazy(() => import('./routes/meetingSeries/MeetingSeries'));
 const Employee = lazy(() => import('./routes/config/employee/Employee'));
 const Contractor = lazy(() => import('./routes/config/contractor/Contractor'));
 const ContractorView = lazy(() =>
@@ -207,14 +206,11 @@ const Routes = () => {
                   {!isAuthenticated && IS_LOCAL_AUTH && (
                     <Route path="/login" exact component={LocalLogin} />
                   )}
-                  <PrivateRoute path="/" exact component={ConstructionUnits} />
+                  <PrivateRoute path="/" exact component={MeetingSeries} />
                   <PrivateRoute path="/test" exact component={TestShell} />
 
                   {/* <PrivateRoute path="/ProjectTest" exact component={ProjectTest} /> */}
                   <PrivateRoute path="/ArchivedProjectTest" exact component={ArchiveProjectTest} />
-
-
-
 
                   <PrivateRoute
                     path="/inquiry/:id"
