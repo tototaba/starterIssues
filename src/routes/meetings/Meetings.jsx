@@ -1,5 +1,11 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { AmbientGridTemplate, useUser, ActionsRenderer, PrimaryActionButton, apiMutate } from 'unity-fluent-library';
+import { 
+  AmbientGridTemplate, 
+  ActionsRenderer, 
+  PrimaryActionButton, 
+  apiMutate,
+  useAgGridApi,
+ } from 'unity-fluent-library';
 import {
   AssignIcon,
   ContactIcon,
@@ -7,13 +13,18 @@ import {
   AddIcon,
 } from '@fluentui/react-icons';
 import { Typography } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
+// import CreateMeetingSideSheet from '../meeting/CreateMeetingSideSheet';
 
 const Meetings = (props) => {
   const { match, ...other } = props;
   const { params } = match;
   const [meetingSeriesId, setMeetingSeriesId] = useState(params?.meetingSeriesId || null);
+  const { gridApi, onGridReady } = useAgGridApi();
   const [loading, setLoading] = useState(false);
   const [meetings, setMeetings] = useState([]);
+  const history = useHistory();
+  const [ open, setOpen ] = useState(false);
 
   const fetchMeetings = async () => {
     try {
@@ -87,24 +98,49 @@ const Meetings = (props) => {
     ],
   };
 
+  const handleRowSelected = useCallback(
+    event => {
+      let selectedMeeting = event.data;
+      if (selectedMeeting) {
+        history.push(`/meetings/${meetingSeriesId}/meeting/${selectedMeeting.id}`)
+      }
+    },
+    [gridApi, history]
+  );
+
+  const handleOnClose = () => {
+    fetchMeetings();
+    setOpen(false);
+  };
+
   const addMeetingButton = (
-    <PrimaryActionButton>
-      <Typography>Add</Typography>
+    <PrimaryActionButton onClick={() => setOpen(true)}>
+      <Typography>Add Meeting</Typography>
       <AddIcon />
     </PrimaryActionButton>
   )
-
+  
   return (
+    <>
+    {/* <CreateMeetingSideSheet
+      open={open}
+      onClose={handleOnClose}
+    /> */}
     <AmbientGridTemplate
       title='Meetings'
       primaryActionButton={addMeetingButton}
       gridOptions={gridOptions}
+      onRowSelected={handleRowSelected}
+      onRowClicked={handleRowSelected}
+      rowSelection="single"
       data={meetings}
       loading={loading}
       hideGroupTab
       hideColumnTab
       frameworkComponents={{ actionsRenderer: ActionsRenderer }}
     />
+    </>
+    
   );
 };
 

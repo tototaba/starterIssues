@@ -34,7 +34,7 @@ const MeetingSeries = (props) => {
     try {
       const response = await apiMutate(
         process.env.REACT_APP_PRODUCTIVITY_API_BASE,
-        "cpsmeeting_group",
+        `cpsmeeting_group`,
         {
           method: "GET"
         });
@@ -60,7 +60,7 @@ const MeetingSeries = (props) => {
     try {
       const response = await apiMutate(
         process.env.REACT_APP_PRODUCTIVITY_API_BASE,
-        "cpsmeeting",
+        `cpsmeeting`,
         {
           method: "GET"
         });
@@ -135,7 +135,6 @@ const MeetingSeries = (props) => {
     event => {
       let selectedMeetingSeries = event.data;
       if (selectedMeetingSeries) {
-        console.log(history)
         history.push(`/meetings/${selectedMeetingSeries.id}`)
       }
     },
@@ -157,7 +156,6 @@ const MeetingSeries = (props) => {
       onRowSelected={handleRowSelected}
       onRowClicked={handleRowSelected}
       rowSelection="single"
-      getRowNodeId={row => console.log(row)}
       data={meetingSeries}
       loading={loading}
       api={gridApi}
