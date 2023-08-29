@@ -3,27 +3,50 @@ import { Box, Accordion } from '@material-ui/core';
 import React, { useEffect, useMemo, useState } from 'react';
 import { ActionsRenderer, AmbientGridTemplate, apiMutate, useAxiosGet, useUser } from 'unity-fluent-library';
 
-const MinutesTab = (props) => {
-  const {
-    meeting,
-    oldBusiness,
-    newBusiness,
-  } = props;
+const MinutesTab = ({ meeting }) => {
+  const [height, setHeight] = useState(0);
   const user = useUser();
+  const [meetingItems, setMeetingItems] = useState([]);
+  const [newBusiness, setNewBusiness] = useState([]);
+  const [oldBusiness, setOldBusiness] = useState([]);
 
-  // console.log(oldBusiness);
-  // console.log(newBusiness);
+  const fetchMeetingItems = async () => {
+    try {
+      const response = await apiMutate(
+        process.env.REACT_APP_PRODUCTIVITY_API_BASE,
+        "cpsmeeting_item",
+        {
+          method: "GET"
+        });
+      setMeetingItems(response.data)
+      const formattedDates = response.data.map(item => {
+        return {
+          ...item,
+          due_date: new Date(item.due_date).toLocaleDateString(),
+        }
+      })
+      const newBusiness = [];
+      const oldBusiness = [];
 
-  // const [
-  //   { data: meetingItems},
-  //   refetchMeetingItems
-  // ] = useAxiosGet(
-  //   `https://localhost:44371/ProductivityService/api/v1`,
-  //   `cpsmeeting_item`,
-  //   {},
-  //   !!user,
-  //   false
-  // )
+      formattedDates.forEach(item => {
+        console.log("meeting: ", meeting?.date, " item : ", item.open_date)
+        console.log(new Date(item.open_date) < new Date(meeting?.date))
+        if (item.meeting_created === meeting?.id && item.group_id === meeting?.group_id) {
+          newBusiness.push(item);
+        } else if (item.group_id === meeting?.group_id && new Date(item.open_date) < new Date(meeting?.date)) {
+          oldBusiness.push(item);
+        }
+      });
+      setNewBusiness(newBusiness);
+      setOldBusiness(oldBusiness);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchMeetingItems();
+  }, [meeting]);
 
   const actionList = useMemo(
     () => [

@@ -26,7 +26,6 @@ const MeetingControls = (props) => {
   const history = useHistory();
 
   useEffect(() => {
-    console.log(history);
     if (meeting) {
       setMeetingGroup(meeting.cpsMeetingCpsMeeting_group);
     }

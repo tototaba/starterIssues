@@ -4,8 +4,13 @@ import {
   // FluentTextFieldAutoComplete,
   Form,
   Field,
+  SubmitButton,
   FluentDatePicker,
   FluentTimePicker,
+  TimeField,
+  FluentTextField,
+  FluentSelectMenu,
+  FormButtons,
   FluentTextFieldAutoComplete,
   apiMutate,
   useHandleAxiosSnackbar,
@@ -309,7 +314,7 @@ const CreateMeetingSideSheet = ({ open, onClose }) => {
     </Box>,
   ];
   return (
-    <SideSheet onClose={handleClose} open={open} width={"700px"}>
+    <SideSheet title="Create a Meeting Series" onClose={handleClose} open={open} width={"700px"}>
       <CreateMeetingSeriesModal createAction={handleCreateMeetingSeries} open={createSeriesOpen} onClose={() => { setCreateSeriesOpen(false) }} />
       <AmbientStepper activeStep={activeStep} steps={steps} />
       <Box sx={{ padding: "3em" }}>

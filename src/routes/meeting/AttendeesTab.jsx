@@ -1,16 +1,22 @@
 import { EditIcon } from '@fluentui/react-icons';
 import { Box } from '@material-ui/core';
-import React, { useMemo, useState } from 'react';
-import { ActionsRenderer, AmbientGridTemplate } from 'unity-fluent-library';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ActionsRenderer, AmbientGridTemplate, FluentTextFieldAutoComplete } from 'unity-fluent-library';
+import EditAttendeesSideSheet from './EditAttendeesSideSheet';
 
-const AttendeesTab = ({ attendees }) => {
+const AttendeesTab = ({ fetchMeeting, meetingId, meetingAttendees, meetingAttendeeMeeting, open, setOpen }) => {
+
+  const handleEdit = () => {
+    setOpen(true);
+  }
+
   const actionList = useMemo(
     () => [
       {
         id: 1, // Must be unique
         title: 'Edit',
         icon: EditIcon,
-        // onClick: handleEdit,
+        onClick: handleEdit,
         disabled: false
       }
     ],
@@ -33,28 +39,29 @@ const AttendeesTab = ({ attendees }) => {
       { headerName: 'Send Minutes', field: 'send_minutes', },
       // { headerName: 'Minutes Taker', field: 'minutes_taker', },
       { headerName: 'Attended', field: 'attended', },
-      {
-        headerName: 'Actions',
-        cellRenderer: 'actionsRenderer',
-        cellRendererParams: {
-          actionList
-        },
-        suppressMenu: true,
-      }
     ],
   };
 
-
   return (
-    <AmbientGridTemplate
-      title='Attendees'
-      // primaryActionButton={addMeetingSeriesButton}
-      gridOptions={gridOptions}
-      data={attendees}
-      // loading={loading}
-      // useNewHeader
-      frameworkComponents={{ actionsRenderer: ActionsRenderer }}
-    />
+    <>
+      <EditAttendeesSideSheet
+        open={open}
+        onClose={() => { setOpen(false) }}
+        meetingAttendees={meetingAttendees}
+        meetingAttendeeMeeting={meetingAttendeeMeeting}
+        meetingId={meetingId}
+        fetchMeeting={fetchMeeting}
+      />
+
+      <AmbientGridTemplate
+        title='Attendees'
+        gridOptions={gridOptions}
+        data={meetingAttendeeMeeting}
+        // loading={loading}
+        // useNewHeader
+        frameworkComponents={{ actionsRenderer: ActionsRenderer }}
+      />
+    </>
   );
 };
 

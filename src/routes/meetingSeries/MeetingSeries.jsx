@@ -102,6 +102,7 @@ const MeetingSeries = (props) => {
       }
     ],
     []
+
   );
 
   const gridOptions = {
