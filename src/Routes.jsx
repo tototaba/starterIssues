@@ -33,6 +33,7 @@ const ConstructionUnits = lazy(() =>
   import('./routes/config/constructionUnits/ConstructionUnits')
 );
 const MeetingSeries = lazy(() => import('./routes/meetingSeries/MeetingSeries'));
+const Meetings = lazy(() => import('./routes/meetings/Meetings'))
 const Employee = lazy(() => import('./routes/config/employee/Employee'));
 const Contractor = lazy(() => import('./routes/config/contractor/Contractor'));
 const ContractorView = lazy(() =>
@@ -207,6 +208,13 @@ const Routes = () => {
                     <Route path="/login" exact component={LocalLogin} />
                   )}
                   <PrivateRoute path="/" exact component={MeetingSeries} />
+                  <PrivateRoute
+                    path="/meetings/:meetingSeriesId"
+                    exact
+                    component={Meetings}
+                  />
+
+                  <PrivateRoute path="/meetings" exact component={Meetings} />
                   <PrivateRoute path="/test" exact component={TestShell} />
 
                   {/* <PrivateRoute path="/ProjectTest" exact component={ProjectTest} /> */}
@@ -216,11 +224,7 @@ const Routes = () => {
                     path="/inquiry/:id"
                     render={props => <Inquiry {...props} />}
                   />
-                  {/* <PrivateRoute
-                    path="/project"
-                    exact
-                    component={WorkOrder}
-                  /> */}
+                  
                   <PrivateRoute
                     path="/projects"
                     exact
