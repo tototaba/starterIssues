@@ -16,6 +16,8 @@ import {
   useHandleAxiosSnackbar,
   AmbientStepper,
   FluentButton,
+  useUser,
+  useAxiosGet,
 } from "unity-fluent-library"
 import {
   Box,
@@ -23,53 +25,31 @@ import {
   TextField,
 } from '@material-ui/core';
 import CreateMeetingSeriesModal from '../meetingSeries/CreateMeetingSeriesModal';
-const CreateMeetingSideSheet = ({ open, onClose }) => {
+const CreateMeetingSideSheet = (props) => {
+  const {
+    open,
+    onClose,
+    tenantUsers,
+  } = props;
   const formRef = useRef(null);
   const { handleErrorSnackbar, handleSuccessSnackbar } = useHandleAxiosSnackbar();
-  const [users, setUsers] = useState([]);
+  // const [users, setUsers] = useState([]);
   const [selectedMeetingSeries, setSelectedMeetingSeries] = useState(null);
-  const [series, setSeries] = useState([]);
+  // const [series, setSeries] = useState([]);
   const steps = ['Select or Create a Meeting Series', 'Create Meeting']; // Define your steps
   const [activeStep, setActiveStep] = useState(0); // State to track active step
   const [createSeriesOpen, setCreateSeriesOpen] = useState(false);
+  const user = useUser();
+
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
-  const fetchSeries = async () => {
-    try {
-      const response = await apiMutate(
-        process.env.REACT_APP_PRODUCTIVITY_API_BASE,
-        "CpsMeeting_group",
-        {
-          method: "GET"
-        });
-      const series = response.data;
-
-      setSeries([...series])
-    } catch (error) {
-      handleErrorSnackbar("Could Not Fetch Meeting Series.")
-    }
-  };
-
-  const fetchUsers = async () => {
-    try {
-      const response = await apiMutate(
-        process.env.REACT_APP_PRODUCTIVITY_API_BASE,
-        "cpsuser",
-        {
-          method: "GET"
-        });
-      const users = response.data;
-      for (let user of users) {
-        user.fullName = user.first_name + " " + user.last_name;
-      }
-
-      setUsers([...users])
-    } catch (error) {
-      handleErrorSnackbar("Could Not Fetch Users.")
-    }
-  };
+  const [{ data: series }, fetchSeries] = useAxiosGet(
+    process.env.REACT_APP_PRODUCTIVITY_API_BASE,
+    `cpsmeeting_group`,
+    {},
+  );
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
@@ -121,8 +101,8 @@ const CreateMeetingSideSheet = ({ open, onClose }) => {
       // group_id: selectedMeetingSeries.id, // Assuming company_id corresponds to group_id
       user_id: user.id,
       email: user.email,
-      first_name: user.first_name,
-      last_name: user.last_name,
+      first_name: user.givenName,
+      last_name: user.surname,
       company: null, // You can update this if needed
       meeting_number: meetingNumber, // You can update this if needed
       is_guest: 0, // Default to 0 for user
@@ -137,7 +117,6 @@ const CreateMeetingSideSheet = ({ open, onClose }) => {
       const response = await saveMeetingWithAttendees(values);
       const meetingName = response.data.createdMeetingAttendeeMeetingRecords.Title;
       handleSuccessSnackbar(`Successfully Created Meeting`)
-      // ${meetingName}
       onClose();
     } catch (error) {
       handleErrorSnackbar("Could Not Create Meeting.")
@@ -155,6 +134,7 @@ const CreateMeetingSideSheet = ({ open, onClose }) => {
     const data = {
       data: {
         name: values.Title,
+        tenant_id: user.currentTenantId,
       },
       method: "POST"
     }
@@ -163,24 +143,16 @@ const CreateMeetingSideSheet = ({ open, onClose }) => {
         process.env.REACT_APP_PRODUCTIVITY_API_BASE,
         "CpsMeeting_group",
         data
-
       );
       const createdSeries = response.data;
       fetchSeries();
       handleSuccessSnackbar(`Successfully Created Meeting Series`)
-      // ${createdSeries.name}
       setSelectedMeetingSeries(createdSeries);
       setCreateSeriesOpen(false);
     } catch (error) {
       handleErrorSnackbar("Could Not Create Meeting Series.")
     }
   };
-
-  useEffect(() => {
-    fetchUsers();
-    fetchSeries();
-  }, [open]);
-
 
   const handleClose = () => {
     onClose();
@@ -304,8 +276,8 @@ const CreateMeetingSideSheet = ({ open, onClose }) => {
           margin="normal"
           size="small"
           isMultiple
-          options={users}
-          optionKey={'fullName'}
+          options={tenantUsers}
+          optionKey={'displayName'}
           required
         // initialValue={ }
         />

@@ -6,7 +6,8 @@ import {
   ActionsRenderer,
   PrimaryActionButton,
   apiMutate,
-  useAgGridApi
+  useAgGridApi,
+  useAxiosGet,
 } from 'unity-fluent-library';
 import {
   AssignIcon,
@@ -22,27 +23,23 @@ const MeetingSeries = (props) => {
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   // const successAction = getSuccessAction(closeSnackbar);
-  const [meetingSeries, setMeetingSeries] = useState([]);
-  const [meetings, setMeetings] = useState([]);
   const [numMeetings, setNumMeetings] = useState(0);
   const { gridApi, onGridReady } = useAgGridApi();
   const [selectedRow, setSelectedRow] = useState();
   const history = useHistory();
   const user = useUser();
 
-  const fetchMeetingSeries = async () => {
-    try {
-      const response = await apiMutate(
-        process.env.REACT_APP_PRODUCTIVITY_API_BASE,
-        `cpsmeeting_group`,
-        {
-          method: "GET"
-        });
-      setMeetingSeries(response.data)
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [{ data: meetingSeries }, refetchMeetingSeries] = useAxiosGet(
+    process.env.REACT_APP_PRODUCTIVITY_API_BASE,
+    `cpsmeeting_group`,
+    {},
+  );
+
+  const [{ data: meetings }, refetchMeetings] = useAxiosGet(
+    process.env.REACT_APP_PRODUCTIVITY_API_BASE,
+    `cpsmeeting`,
+    {},
+  );
 
   const countNumMeetings = () => {
     meetingSeries.forEach((ms) => {
@@ -55,26 +52,6 @@ const MeetingSeries = (props) => {
     });
     console.log(meetingSeries);
   }
-
-  const fetchMeetings = async () => {
-    try {
-      const response = await apiMutate(
-        process.env.REACT_APP_PRODUCTIVITY_API_BASE,
-        `cpsmeeting`,
-        {
-          method: "GET"
-        });
-      setMeetings(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchMeetingSeries();
-    fetchMeetings();
-    countNumMeetings();
-  }, [])
 
   const actionList = useMemo(
     () => [
@@ -102,7 +79,6 @@ const MeetingSeries = (props) => {
       }
     ],
     []
-
   );
 
   const gridOptions = {

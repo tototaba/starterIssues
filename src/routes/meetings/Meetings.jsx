@@ -5,6 +5,8 @@ import {
   PrimaryActionButton, 
   apiMutate,
   useAgGridApi,
+  useAxiosGet,
+  useUser,
  } from 'unity-fluent-library';
 import {
   AssignIcon,
@@ -14,7 +16,7 @@ import {
 } from '@fluentui/react-icons';
 import { Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-// import CreateMeetingSideSheet from '../meeting/CreateMeetingSideSheet';
+import CreateMeetingSideSheet from '../meeting/CreateMeetingSideSheet';
 
 const Meetings = (props) => {
   const { match, ...other } = props;
@@ -22,27 +24,30 @@ const Meetings = (props) => {
   const [meetingSeriesId, setMeetingSeriesId] = useState(params?.meetingSeriesId || null);
   const { gridApi, onGridReady } = useAgGridApi();
   const [loading, setLoading] = useState(false);
-  const [meetings, setMeetings] = useState([]);
   const history = useHistory();
   const [ open, setOpen ] = useState(false);
+  const [ meetings, setMeetings ] = useState([]);
+  const user = useUser();
 
-  const fetchMeetings = async () => {
-    try {
-      const response = await apiMutate(
-        process.env.REACT_APP_PRODUCTIVITY_API_BASE,
-        `cpsmeeting_group/${meetingSeriesId}/full`,
-        {
-          method: "GET"
-        });
-      setMeetings(response.data.cpsMeeting_groupCpsMeeting);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // fetch Meeting here
+  const [{ data: meetingSeries }, refetchMeetingSeries] = useAxiosGet(
+    process.env.REACT_APP_PRODUCTIVITY_API_BASE,
+    `cpsmeeting_group/${meetingSeriesId}/full`,
+    {},
+  );
+
+  const [{ data: tenantUsers }, refetchTenantUsers] = useAxiosGet(
+    process.env.REACT_APP_SECURITY_API_BASE,
+    `users?tenantId=${user?.currentTenantId}&includeOnlyActiveTenants=true`,
+    {},
+    !!!user?.id
+  );
 
   useEffect(() => {
-    fetchMeetings();
-  }, [])
+    if (meetingSeries) {
+      setMeetings(meetingSeries.cpsMeeting_groupCpsMeeting);
+    }
+  }, [meetingSeries]);
 
   const actionList = useMemo(
     () => [
@@ -109,7 +114,7 @@ const Meetings = (props) => {
   );
 
   const handleOnClose = () => {
-    fetchMeetings();
+    refetchMeetingSeries(); 
     setOpen(false);
   };
 
@@ -122,10 +127,11 @@ const Meetings = (props) => {
   
   return (
     <>
-    {/* <CreateMeetingSideSheet
+    <CreateMeetingSideSheet
       open={open}
       onClose={handleOnClose}
-    /> */}
+      tenantUsers={tenantUsers}
+    />
     <AmbientGridTemplate
       title='Meetings'
       primaryActionButton={addMeetingButton}

@@ -14,6 +14,7 @@ import {
   FluentTextFieldAutoComplete,
   apiMutate,
   FluentDialog,
+  useAxiosGet,
 } from "unity-fluent-library"
 import {
   Box,
@@ -24,12 +25,9 @@ import {
 import { HintPanel } from '../../utils/HintPanel';
 import { create } from 'lodash';
 // import MeetingItemFormPropertyTable from './MeeingItemFormPropertyTable';
-const CreateMeetingSeriesModal = ({ open, onClose, createAction }) => {
-  // TODO need to get the meeting number and pass it in
-  // TODO need to pass in the current meeting series
-  const formRef = useRef(null);
-  const [users, setUsers] = useState([]);
 
+const CreateMeetingSeriesModal = ({ open, onClose, createAction }) => {
+  const formRef = useRef(null);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -38,30 +36,6 @@ const CreateMeetingSeriesModal = ({ open, onClose, createAction }) => {
       [name]: value,
     }));
   };
-
-  const fetchUsers = async () => {
-    try {
-      const response = await apiMutate(
-        process.env.REACT_APP_PRODUCTIVITY_API_BASE,
-        "cpsuser",
-        {
-          method: "GET"
-        });
-      const users = response.data;
-      for (let user of users) {
-        user.fullName = user.first_name + " " + user.last_name;
-      }
-
-      setUsers([...users])
-    } catch (error) {
-      console.log(error);
-    }
-
-  }
-
-  useEffect(() => {
-    fetchUsers();
-  }, [open])
 
   return (
     <FluentDialog

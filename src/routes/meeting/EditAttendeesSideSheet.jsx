@@ -47,7 +47,6 @@ const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 9
       const key = `${item.attendee_id}`;
       initialMap.set(key, item);
     }
-    console.log("🚀 ~ file: EditAttendeesSideSheet.jsx:59 ~ updateAttendees ~ initialMap:", initialMap)
 
     const currentMap = new Map();
     for (let i = 0; i < values.length; i++) {
@@ -81,7 +80,6 @@ const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 9
   }
 
   const deleteMeetingAttendeeMeetings = async (attendees) => {
-    console.log("🚀 ~ file: EditAttendeesSideSheet.jsx:74 ~ deleteAttendees ~ data:", attendees)
     try {
       const response = await apiMutate(
         process.env.REACT_APP_PRODUCTIVITY_API_BASE,
@@ -97,7 +95,6 @@ const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 9
   }
 
   const addMeetingAttendeeMeetings = async (attendees) => {
-    console.log("🚀 ~ file: EditAttendeesSideSheet.jsx:74 ~ deleteAttendees ~ data:", attendees)
     try {
       const response = await apiMutate(
         process.env.REACT_APP_PRODUCTIVITY_API_BASE,
@@ -113,7 +110,6 @@ const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 9
   }
 
   const updateMeetingAttendeeMeetings = async (attendees) => {
-    console.log("🚀 ~ file: EditAttendeesSideSheet.jsx:74 ~ deleteAttendees ~ data:", attendees)
     try {
       const response = await apiMutate(
         process.env.REACT_APP_PRODUCTIVITY_API_BASE,
@@ -147,14 +143,16 @@ const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 9
       }
 
       const updatedAttendees = [];
-      Object.keys(attendeesMetaData).forEach((key) => {
-        updatedAttendees.push({
-          attendee_id: key,
-          meeting_id: meetingId,
-          send_review: attendeesMetaData[key].send_review ? 1 : 0,
-          send_minutes: attendeesMetaData[key].send_minutes ? 1 : 0,
+      if (attendeesMetaData) {
+        Object.keys(attendeesMetaData).forEach((key) => {
+          updatedAttendees.push({
+            attendee_id: key,
+            meeting_id: meetingId,
+            send_review: attendeesMetaData[key].send_review ? 1 : 0,
+            send_minutes: attendeesMetaData[key].send_minutes ? 1 : 0,
+          });
         });
-      });
+      }
       if (updatedAttendees.length !== 0) {
         await updateMeetingAttendeeMeetings(updatedAttendees)
       }
@@ -170,14 +168,15 @@ const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 9
 
   useEffect(() => {
     const newAttendeesMetaData = {};
-    meetingAttendeeMeeting.forEach(row => {
-      newAttendeesMetaData[row.id] = {
-        send_review: row.send_review == "Yes" ? true : false,
-        send_minutes: row.send_minutes == "Yes" ? true : false,
-      };
-    });
+    if (meetingAttendeeMeeting) {
+      meetingAttendeeMeeting.forEach(row => {
+        newAttendeesMetaData[row.id] = {
+          send_review: row.send_review == "Yes" ? true : false,
+          send_minutes: row.send_minutes == "Yes" ? true : false,
+        };
+      });
+    }
     setAttendeesMetaData(newAttendeesMetaData);
-    console.log("🚀 ~ file: AttendeesGrid.jsx:29 ~ useEffect ~ newAttendeesMetaData:", newAttendeesMetaData)
 
   }, [setAttendeesMetaData, meetingAttendeeMeeting]);
 
