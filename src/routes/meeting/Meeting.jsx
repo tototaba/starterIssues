@@ -21,18 +21,40 @@ import MinutesTab from './MinutesTab';
 import AttendeesTab from './AttendeesTab';
 import CorrespondenceTab from './CorrespondenceTab';
 
+import EditAttendeesSideSheet from './EditAttendeesSideSheet';
+
 const Meeting = (props) => {
   const { match, ...other } = props;
   const { params } = match;
   const [meetingId, setMeetingId] = useState(params?.meetingId || null);
-  const [attendees, setAttendees] = useState([]);
+  const [meetingAttendeeMeeting, setMeetingAttendeeMeeting] = useState([]);
+  const [meetingAttendees, setMeetingAttendees] = useState([]);
+  // const [meeting, setMeeting] = useState();
+  // const [meetingAttendeeMeeting, setAttendees] = useState([]);
   const [crumbData, setCrumbData] = useState([]);
   const [chipData, setChipData] = useState([]);
+  const [minutesOpen, setMinutesOpen] = useState(false);
+  const [attendeesOpen, setAttendeesOpen] = useState(false);
   const [tabValue, setTabValue] = useState(0);
-  const tabList = [{ label: 'Minutes' }, { label: 'Attendees' }, { label: 'Correspondence' }];
   const user = useUser();
   const [newBusiness, setNewBusiness] = useState([]);
   const [oldBusiness, setOldBusiness] = useState([]);
+  const tabList = [
+    {
+      label: 'Minutes',
+      action: () => setMinutesOpen(!minutesOpen),
+      buttonLabel: 'Add Meeting Item',
+    },
+    {
+      label: 'Attendees',
+      action: () => setAttendeesOpen(!attendeesOpen),
+      buttonLabel: 'Manage Attendees of This Meeting',
+    },
+    {
+      label: 'Correspondence',
+    },
+  ];
+
 
   const [{ data: meeting }, refetchMeeting] = useAxiosGet(
     process.env.REACT_APP_PRODUCTIVITY_API_BASE,
@@ -88,20 +110,20 @@ const Meeting = (props) => {
     return { crumbData, chipData };
   };
 
-  function filterObjects(biggerList, smallerList) {
-    if (!biggerList || !smallerList) {
+  function filterAttendees(meetingAttendees, meetingAttendeeMeeting) {
+    if (!meetingAttendees || !meetingAttendeeMeeting) {
       return [];
     }
     // Create a Set of attendee_id values from the smallerList for quick lookup
-    const attendeeIds = new Set(smallerList.map(obj => obj.attendee_id));
+    const attendeeIds = new Set(meetingAttendeeMeeting.map(obj => obj.attendee_id));
 
     // Filter the objects from the biggerList
-    const filteredList = biggerList.filter(obj => attendeeIds.has(obj.id));
+    const filteredList = meetingAttendees.filter(obj => attendeeIds.has(obj.id));
 
     return filteredList;
   };
 
-  const sortOldNewBusiness = () => {
+  const sortBusinessItems = () => {
     const formattedDates = meetingItems.map(item => {
       return {
         ...item,
@@ -125,26 +147,38 @@ const Meeting = (props) => {
 
   const setParsedAttendees = () => {
     if (series && meeting) {
-      console.log(series);
-      const groupAttendees = series.cpsMeeting_groupCpsMeeting_attendee;
-      const attendeeMeeting = meeting.cpsMeetingCpsMeeting_attendee_meeting;
-  
-      const filteredGroupAttendees = filterObjects(groupAttendees, attendeeMeeting);
+
+      const meetingAttendees = series.cpsMeeting_groupCpsMeeting_attendee.map((attendee) => ({
+        ...attendee,
+        name: attendee.first_name + " " + attendee.last_name
+      }));
+      const meetingAttendeeMeeting = meeting.cpsMeetingCpsMeeting_attendee_meeting;
+
+      setMeetingAttendees(meetingAttendees)
+
+      const filteredGroupAttendees = filterAttendees(meetingAttendees, meetingAttendeeMeeting);
       if (!filteredGroupAttendees.length) {
         return {};
       }
-      attendeeMeeting.sort((a, b) => a.id - b.id);
+      meetingAttendeeMeeting.sort((a, b) => a.id - b.id);
       filteredGroupAttendees.sort((a, b) => a.id - b.id);
-  
-      const combinedArrays = Array.from({ length: Math.min(attendeeMeeting.length, filteredGroupAttendees.length) }, (_, i) => [attendeeMeeting[i], filteredGroupAttendees[i]]);
+
+      const maxLength = Math.min(meetingAttendeeMeeting.length, filteredGroupAttendees.length);
+      const combinedArrays = [];
+
+      for (let i = 0; i < maxLength; i++) {
+        const pair = [meetingAttendeeMeeting[i], filteredGroupAttendees[i]];
+        combinedArrays.push(pair);
+      }
+
       const mergedAttendees = combinedArrays.map((arr) => {
-  
+
         return replaceNullWithNo({ ...arr[0], ...arr[1], name: arr[1].first_name + " " + arr[1].last_name })
       });
-  
+
       const parsedAttendees = mergedAttendees.map((attendee) => { return replaceNullWithNo(attendee) });
-  
-      setAttendees(parsedAttendees);
+
+      setMeetingAttendeeMeeting(parsedAttendees);
     }
   };
 
@@ -156,7 +190,7 @@ const Meeting = (props) => {
 
   useEffect(() => {
     if (meetingItems) {
-      sortOldNewBusiness();
+      sortBusinessItems();
     }
     if (series) {
       setParsedAttendees();
@@ -166,8 +200,15 @@ const Meeting = (props) => {
     }
   }, [meetingItems, series, meeting]);
 
+  const test = useCallback(() => {
+    console.log(meetingAttendeeMeeting);
+    console.log("🚀 ~ file: Meeting.jsx:206 ~ test ~ oldBusiness:", oldBusiness)
+    console.log("🚀 ~ file: Meeting.jsx:208 ~ test ~ newBusiness:", newBusiness)
+  }, [meetingAttendeeMeeting]);
+
   return (
     <Box>
+      <button onClick={test}>test</button>
       <SubHeaderAction>
         <MeetingHeader
           chipData={chipData}
@@ -181,24 +222,26 @@ const Meeting = (props) => {
           tabList={tabList}
           handleChange={handleTabChange}
           value={tabValue}
-          buttonLabel='Add Meeting Item'
-          hidePAB={tabValue != 0 ?? tabValue == 0}
+          buttonLabel={tabList[tabValue].buttonLabel}
+          hidePAB={tabValue === 2}
+          handleClick={tabList[tabValue].action}
         />
       </SubHeaderAction>
       <FluentTabPanel value={tabValue} index={0}>
-        <MinutesTab 
+        <MinutesTab
           meeting={meeting}
           oldBusiness={oldBusiness}
           newBusiness={newBusiness}
         />
       </FluentTabPanel>
       <FluentTabPanel value={tabValue} index={1}>
-        <AttendeesTab attendees={attendees} />
+        <AttendeesTab meetingAttendeeMeeting={meetingAttendeeMeeting} />
+        <EditAttendeesSideSheet fetchMeeting={refetchMeeting} meetingId={meetingId} meetingAttendees={meetingAttendees} meetingAttendeeMeeting={meetingAttendeeMeeting} open={attendeesOpen} onClose={() => { setAttendeesOpen(false) }}></EditAttendeesSideSheet>
       </FluentTabPanel>
       <FluentTabPanel value={tabValue} index={2}>
         <CorrespondenceTab meeting={meeting} />
       </FluentTabPanel>
-    </Box>
+    </Box >
   );
 };
 

@@ -9,7 +9,7 @@ import {
 import { Tooltip } from '@material-ui/core';
 import EditMeetingSideSheet from './EditMeetingSideSheet';
 import ModalAlert from '../../UI/ModalAlert';
-import { enqueueSnackbar, useSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 import { useHistory } from 'react-router-dom';
 
 const MeetingControls = (props) => {
@@ -18,9 +18,9 @@ const MeetingControls = (props) => {
     fetchMeeting,
     newBusiness,
   } = props;
-  const [ openEditMeetingSideSheet, setOpenEditMeetingSideSheet ] = useState(false);
-  const [ openDeleteModal, setOpenDeleteModal ] = useState(false);
-  const [ meetingGroup, setMeetingGroup ] = useState('');
+  const [openEditMeetingSideSheet, setOpenEditMeetingSideSheet] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [meetingGroup, setMeetingGroup] = useState('');
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const successAction = getSuccessAction(closeSnackbar);
   const history = useHistory();
@@ -92,7 +92,7 @@ const MeetingControls = (props) => {
         onClose={() => setOpenEditMeetingSideSheet(false)}
       />
       <ModalAlert
-        title={`Delete ${meeting? meeting.title : ''}`}
+        title={`Delete ${meeting ? meeting.title : ''}`}
         message='Are you sure you want to delete this meeting?'
         closeAlert={() => setOpenDeleteModal(false)}
         open={openDeleteModal}
@@ -116,7 +116,7 @@ const MeetingControls = (props) => {
         <ArrowForwardIosOutlined />
         <Typography>Next Series</Typography>
       </IconButton>
-      <FluentButton style={{fontSize:'26px'}} variant='outlined' color='secondary'>
+      <FluentButton style={{ fontSize: '26px' }} variant='outlined' color='secondary'>
         New Meeting
       </FluentButton>
     </Box>

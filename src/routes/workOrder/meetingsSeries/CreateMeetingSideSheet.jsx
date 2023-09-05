@@ -42,9 +42,6 @@ const CreateMeetingSideSheet = ({ isOpen, onClose }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Add logic to submit the meeting details
-    console.log('Meeting details submitted:', meetingDetails);
-    // Close the side sheet after submission
     onClose();
   };
 

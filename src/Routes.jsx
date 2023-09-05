@@ -214,7 +214,7 @@ const Routes = () => {
                     path="/meetings/:meetingSeriesId"
                     exact component={Meetings} />
 
-                  <PrivateRoute 
+                  <PrivateRoute
                     path="/meetings/:meetingSeriesId/meeting/:meetingId"
                     exact component={Meeting} />
 
@@ -227,7 +227,7 @@ const Routes = () => {
                     path="/inquiry/:id"
                     render={props => <Inquiry {...props} />}
                   />
-                  
+
                   <PrivateRoute
                     path="/projects"
                     exact

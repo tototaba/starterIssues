@@ -24,6 +24,7 @@ import {
   responsiveFontSizes
 } from '@material-ui/core';
 import AttendeesGrid from './AttendeesGrid';
+import MeetingItemFormPropertyTable from '../../utils/MeeingItemFormPropertyTable';
 const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 96, meetingAttendeeMeeting, fetchMeeting }) => {
   // selectedMeetingSeries = { id: 31, name: "Series 1", cpsMeeting_groupCpsMeeting: [0, 1, 0, { location: "Univerus Head Office" }] }
   const formRef = useRef(null);
@@ -62,13 +63,6 @@ const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 9
     });
 
     // Check for removed attendees
-    initialMap.forEach((initialAttendee, key) => {
-      if (!currentMap.has(key)) {
-        removedAttendees.push(initialAttendee);
-      }
-    });
-
-    // Check for updated attendees
     initialMap.forEach((initialAttendee, key) => {
       if (!currentMap.has(key)) {
         removedAttendees.push(initialAttendee);
@@ -161,7 +155,8 @@ const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 9
       handleSuccessSnackbar("Attendees updated successfully")
       onClose();
     } catch (error) {
-      handleErrorSnackbar("Error updating attendees")
+      console.log(error)
+      handleErrorSnackbar(error, "Error updating attendees")
     }
 
   }
@@ -171,8 +166,8 @@ const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 9
     if (meetingAttendeeMeeting) {
       meetingAttendeeMeeting.forEach(row => {
         newAttendeesMetaData[row.id] = {
-          send_review: row.send_review == "Yes" ? true : false,
-          send_minutes: row.send_minutes == "Yes" ? true : false,
+          send_review: row.send_review,
+          send_minutes: row.send_minutes
         };
       });
     }
@@ -186,7 +181,9 @@ const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 9
 
   const test = useCallback(() => {
     console.log(attendeesMetaData)
-  }, [attendeesMetaData]);
+    console.log("🚀 ~ file: EditAttendeesSideSheet.jsx:184 ~ test ~ meetingAttendees:", meetingAttendees)
+    console.log("🚀 ~ file: EditAttendeesSideSheet.jsx:183 ~ test ~ meetingAttendeeMeeting:", meetingAttendeeMeeting)
+  }, [attendeesMetaData, meetingAttendeeMeeting]);
 
   return (
     <SideSheet

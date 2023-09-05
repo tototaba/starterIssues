@@ -6,9 +6,6 @@ import { Switch } from '@material-ui/core';
 const AttendeesGrid = props => {
   const {
     rows,
-    handleMeetingItemPropertyChange,
-    actionType,
-    oldSeries,
     setAttendeesMetaData,
     attendeesMetaData,
   } = props;
@@ -68,11 +65,8 @@ const AttendeesGrid = props => {
       <AgTable
         gridOptions={gridOptions}
         rowData={rows}
+        loading={false}
       />
-      <Switch onChange={() => {
-        setCheck(!check)
-        console.log(check)
-      }}></Switch>
     </>
   );
 };

@@ -24,9 +24,6 @@ const AttendeesTab = ({ fetchMeeting, meetingId, meetingAttendees, meetingAttend
   );
 
   const gridOptions = {
-    frameworkComponents: {
-      actionsCellRenderer: ActionsRenderer,
-    },
     defaultColDef: {
       resizable: true,
       sortable: true,
@@ -44,15 +41,6 @@ const AttendeesTab = ({ fetchMeeting, meetingId, meetingAttendees, meetingAttend
 
   return (
     <>
-      <EditAttendeesSideSheet
-        open={open}
-        onClose={() => { setOpen(false) }}
-        meetingAttendees={meetingAttendees}
-        meetingAttendeeMeeting={meetingAttendeeMeeting}
-        meetingId={meetingId}
-        fetchMeeting={fetchMeeting}
-      />
-
       <AmbientGridTemplate
         title='Attendees'
         gridOptions={gridOptions}

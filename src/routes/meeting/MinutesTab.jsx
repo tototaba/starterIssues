@@ -1,7 +1,8 @@
 import { EditIcon } from '@fluentui/react-icons';
-import { Box } from '@material-ui/core';
-import React, { useMemo } from 'react';
-import { ActionsRenderer, AmbientGridTemplate, useUser } from 'unity-fluent-library';
+import { Box, Accordion } from '@material-ui/core';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ActionsRenderer, AmbientGridTemplate, apiMutate, useAxiosGet, useUser } from 'unity-fluent-library';
+
 
 const MinutesTab = (props) => {
   const {
@@ -9,7 +10,42 @@ const MinutesTab = (props) => {
     oldBusiness,
     newBusiness,
   } = props;
-  const user = useUser();
+
+  const fetchMeetingItems = async () => {
+    try {
+      const response = await apiMutate(
+        REACT_APP_PRODUCTIVITY_API_BASE,
+        "cpsmeeting_item",
+        {
+          method: "GET"
+        });
+      setMeetingItems(response.data)
+      const formattedDates = response.data.map(item => {
+        return {
+          ...item,
+          due_date: new Date(item.due_date).toLocaleDateString(),
+        }
+      })
+      const newBusiness = [];
+      const oldBusiness = [];
+
+      formattedDates.forEach(item => {
+        if (item.meeting_created === meeting?.id && item.group_id === meeting?.group_id) {
+          newBusiness.push(item);
+        } else if (item.group_id === meeting?.group_id && new Date(item.open_date) < new Date(meeting?.date)) {
+          oldBusiness.push(item);
+        }
+      });
+      setNewBusiness(newBusiness);
+      setOldBusiness(oldBusiness);
+    } catch (error) {
+      // console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchMeetingItems();
+  }, [meeting])
 
   const actionList = useMemo(
     () => [
@@ -25,9 +61,6 @@ const MinutesTab = (props) => {
   );
 
   const gridOptions = {
-    frameworkComponents: {
-      actionsCellRenderer: ActionsRenderer,
-    },
     defaultColDef: {
       resizable: true,
       sortable: true,
