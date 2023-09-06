@@ -21,8 +21,6 @@ import { useHistory } from 'react-router-dom';
 const MeetingSeries = (props) => {
   const { params, ...other } = props;
   const [loading, setLoading] = useState(false);
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  // const successAction = getSuccessAction(closeSnackbar);
   const [numMeetings, setNumMeetings] = useState(0);
   const { gridApi, onGridReady } = useAgGridApi();
   const [selectedRow, setSelectedRow] = useState();
@@ -31,8 +29,9 @@ const MeetingSeries = (props) => {
 
   const [{ data: meetingSeries }, refetchMeetingSeries] = useAxiosGet(
     process.env.REACT_APP_PRODUCTIVITY_API_BASE,
-    `cpsmeeting_group`,
+    `cpsmeeting_group/tenant/${user?.currentTenantId}`,
     {},
+    !!!user.currentTenantId
   );
 
   const [{ data: meetings }, refetchMeetings] = useAxiosGet(

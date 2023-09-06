@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Box, TextField } from '@material-ui/core';
-import { 
-  Field, 
+import {
+  Field,
   SideSheet,
   Form,
   FluentDatePicker,
@@ -9,6 +9,7 @@ import {
   SubmitButton,
   apiMutate,
   getSuccessAction,
+  useHandleAxiosSnackbar
 } from 'unity-fluent-library';
 import { useSnackbar } from 'notistack';
 
@@ -19,8 +20,8 @@ const EditMeetingSideSheet = (props) => {
     open,
     onClose,
   } = props;
-  const [ meeting, setMeeting ] = useState(initialMeeting);
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [meeting, setMeeting] = useState(initialMeeting);
+  const { handleErrorSnackbar, handleSuccessSnackbar } = useHandleAxiosSnackbar();
   const successAction = getSuccessAction(closeSnackbar);
 
   useEffect(() => {
@@ -61,36 +62,24 @@ const EditMeetingSideSheet = (props) => {
         data: updatedMeeting
       }
     ).catch(res => {
-      enqueueSnackbar(res.response.data, {
-        variant: 'error',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'center',
-        },
-      });
+      handleErrorSnackbar("", "Unable to update meeting");
     });
     if (updateMeetingResponse?.status === 204) {
       fetchMeeting();
-      enqueueSnackbar('Meeting has been updated', {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'center',
-        },
-        action: successAction,
-      });
+      handleSuccessSnackbar("Successfully Updated Meeting")
     }
     onClose();
   };
 
-  return(
-    <SideSheet 
-      title='Update Meeting' 
-      onClose={onClose} 
+  return (
+    <SideSheet
+      title='Update Meeting'
+      onClose={onClose}
       open={open}
       width='600px'
-      >
+    >
       <Form onSubmit={handleOnSubmit}>
-        <Box sx={{ display: 'flex', direction: 'row', gap: '1rem'}}>
+        <Box sx={{ display: 'flex', direction: 'row', gap: '1rem' }}>
           <Field
             component={TextField}
             label='Title'
@@ -119,7 +108,7 @@ const EditMeetingSideSheet = (props) => {
           size='small'
           initialValue={meeting ? meeting.location : ''}
         />
-        <Box display='flex' direction='row' sx={{ gap: '1rem'}}>
+        <Box display='flex' direction='row' sx={{ gap: '1rem' }}>
           <Field
             component={FluentDatePicker}
             label='Date'
@@ -145,7 +134,7 @@ const EditMeetingSideSheet = (props) => {
             initialValue={meeting ? meeting.end_time : ''}
           />
         </Box>
-        <Box sx={{display: 'flex', justifyContent: 'flex-end', margin: '1rem'}}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', margin: '1rem' }}>
           <SubmitButton
             variant='contained'
             color='primary'

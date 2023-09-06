@@ -51,6 +51,14 @@ const CreateMeetingSideSheet = (props) => {
     {},
   );
 
+  // USE THIS IN THE FUTURE, BUT THERE'S A BUG WHEN CREATING MEETING_ATTENDEES I THInk
+  // const [{ data: series }, fetchSeries] = useAxiosGet(
+  //   process.env.REACT_APP_PRODUCTIVITY_API_BASE,
+  //   `cpsmeeting_group/tenant/${user?.currentTenantId}`,
+  //   {},
+  //   !!!user.currentTenantId
+  // );
+
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };

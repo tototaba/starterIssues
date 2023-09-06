@@ -5,11 +5,11 @@ import {
   FluentButton,
   apiMutate,
   getSuccessAction,
+  useHandleAxiosSnackbar,
 } from 'unity-fluent-library';
 import { Tooltip } from '@material-ui/core';
 import EditMeetingSideSheet from './EditMeetingSideSheet';
 import ModalAlert from '../../UI/ModalAlert';
-import { useSnackbar } from 'notistack';
 import { useHistory } from 'react-router-dom';
 
 const MeetingControls = (props) => {
@@ -21,7 +21,7 @@ const MeetingControls = (props) => {
   const [openEditMeetingSideSheet, setOpenEditMeetingSideSheet] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [meetingGroup, setMeetingGroup] = useState('');
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { handleErrorSnackbar, handleSuccessSnackbar } = useHandleAxiosSnackbar();
   const successAction = getSuccessAction(closeSnackbar);
   const history = useHistory();
 
@@ -52,23 +52,11 @@ const MeetingControls = (props) => {
       console.log(newBusiness);
       const response = await deleteMeeting().catch(res => {
         console.log(res);
-        enqueueSnackbar(res.response.data, {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'center',
-          }
-        });
+
       });
       console.log(response);
       if (response?.status === 204) {
-        enqueueSnackbar('Meeting has been deleted', {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'center'
-          },
-          action: successAction,
-        });
+        handleSuccessSnackbar("", "Meeting deleted successfully");
         rerouteToMeetings();
       }
       setOpenDeleteModal(false);

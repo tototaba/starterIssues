@@ -239,7 +239,10 @@ const Meeting = (props) => {
         <EditAttendeesSideSheet fetchMeeting={refetchMeeting} meetingId={meetingId} meetingAttendees={meetingAttendees} meetingAttendeeMeeting={meetingAttendeeMeeting} open={attendeesOpen} onClose={() => { setAttendeesOpen(false) }}></EditAttendeesSideSheet>
       </FluentTabPanel>
       <FluentTabPanel value={tabValue} index={2}>
-        <CorrespondenceTab meeting={meeting} />
+        <CorrespondenceTab
+          meeting={meeting}
+          attendees={meetingAttendees}
+        />
       </FluentTabPanel>
     </Box >
   );

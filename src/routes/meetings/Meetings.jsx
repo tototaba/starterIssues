@@ -1,13 +1,13 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { 
-  AmbientGridTemplate, 
-  ActionsRenderer, 
-  PrimaryActionButton, 
+import {
+  AmbientGridTemplate,
+  ActionsRenderer,
+  PrimaryActionButton,
   apiMutate,
   useAgGridApi,
   useAxiosGet,
   useUser,
- } from 'unity-fluent-library';
+} from 'unity-fluent-library';
 import {
   AssignIcon,
   ContactIcon,
@@ -25,8 +25,8 @@ const Meetings = (props) => {
   const { gridApi, onGridReady } = useAgGridApi();
   const [loading, setLoading] = useState(false);
   const history = useHistory();
-  const [ open, setOpen ] = useState(false);
-  const [ meetings, setMeetings ] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [meetings, setMeetings] = useState([]);
   const user = useUser();
 
   // fetch Meeting here
@@ -114,7 +114,7 @@ const Meetings = (props) => {
   );
 
   const handleOnClose = () => {
-    refetchMeetingSeries(); 
+    refetchMeetingSeries();
     setOpen(false);
   };
 
@@ -124,29 +124,29 @@ const Meetings = (props) => {
       <AddIcon />
     </PrimaryActionButton>
   )
-  
+
   return (
     <>
-    <CreateMeetingSideSheet
-      open={open}
-      onClose={handleOnClose}
-      tenantUsers={tenantUsers}
-    />
-    <AmbientGridTemplate
-      title='Meetings'
-      primaryActionButton={addMeetingButton}
-      gridOptions={gridOptions}
-      onRowSelected={handleRowSelected}
-      onRowClicked={handleRowSelected}
-      rowSelection="single"
-      data={meetings}
-      loading={loading}
-      hideGroupTab
-      hideColumnTab
-      frameworkComponents={{ actionsRenderer: ActionsRenderer }}
-    />
+      <CreateMeetingSideSheet
+        open={open}
+        onClose={handleOnClose}
+        tenantUsers={tenantUsers}
+      />
+      <AmbientGridTemplate
+        title='Meetings'
+        primaryActionButton={addMeetingButton}
+        gridOptions={gridOptions}
+        onRowSelected={handleRowSelected}
+        onRowClicked={handleRowSelected}
+        rowSelection="single"
+        data={meetings}
+        loading={loading}
+        hideGroupTab
+        hideColumnTab
+        frameworkComponents={{ actionsRenderer: ActionsRenderer }}
+      />
     </>
-    
+
   );
 };
 
