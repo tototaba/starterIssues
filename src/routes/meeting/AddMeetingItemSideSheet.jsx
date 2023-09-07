@@ -9,6 +9,7 @@ import {
   SubmitButton,
   apiMutate,
   FluentButton,
+  useHandleAxiosSnackbar
 } from 'unity-fluent-library';
 import {
   TextField,
@@ -16,16 +17,16 @@ import {
   Chip,
 } from '@material-ui/core';
 import { Stack } from '@mui/material';
+import { handleError } from '@apollo/client/link/http/parseAndCheckHttpResponse';
 
-
-const AddMeetingItemSideSheet = ({ open, onClose, }) => {
+const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, refetchMeetingItems }) => {
   const formRef = useRef(null);
   const [users, setUsers] = useState([]);
   const [createdBy, setCreatedBy] = useState('N/A');
   const [createdOn, setCreatedOn] = useState('N/A');
   const [updatedBy, setUpdatedBy] = useState('N/A');
   const [updatedOn, setUpdatedOn] = useState('N/A');
-
+  const { handleErrorSnackbar, handleSuccessSnackbar } = useHandleAxiosSnackbar();
   const fetchUsers = async () => {
     try {
       const response = await apiMutate(
@@ -48,8 +49,76 @@ const AddMeetingItemSideSheet = ({ open, onClose, }) => {
     fetchUsers();
   }, [open])
 
+  function convertUTCToDateString(utcTimestamp) {
+    const date = new Date(utcTimestamp);
+    const year = date.getUTCFullYear();
+    const month = date.getUTCMonth() + 1; // Months are zero-based, so add 1
+    const day = date.getUTCDate();
+
+    const formattedDate = `${month}/${day}/${year}`;
+    return formattedDate;
+  }
+
+  async function handleCreateMeetingItemWithAttendees(meeting_item_action_attendee) {
+    try {
+      const data = {
+        data: meeting_item_action_attendee,
+        method: "POST"
+      }
+
+      const response = await apiMutate(
+        process.env.REACT_APP_PRODUCTIVITY_API_BASE,
+        "CpsMeeting_item/createCpsMeetingItem",
+        data
+      );
+      refetchMeetingItems();
+      handleSuccessSnackbar("Successfully added Meeting Item")
+    } catch (error) {
+      console.log(error);
+      handleErrorSnackbar("", "Error adding Meeting Item");
+    }
+  }
+
+
   const handleSubmit = values => {
-    console.log(values);
+    var date = convertUTCToDateString(Date.now());
+
+    const meeting_item =
+    {
+      group_id: meetingSeriesId,
+      meeting_created: meetingId, //meeting_id
+      open_date: date,
+      due_date: values.due_date,
+      is_persistant: 0,
+      is_section: 0,
+      created_by: "",
+      created_on: date,
+      subject: values.subject,
+      priority: values.priority,
+    }
+
+    const meeting_item_action =
+    {
+      meeting_id: meetingId,
+      action_taken: values.action_taken,
+      action_date: values.action_date,
+      status: values.status
+    }
+
+    const meeting_attendee =
+    {
+      id: values.owner.id, //attendee+id
+      group_id: meetingSeriesId,
+      meeting_number: meetingId
+    }
+
+    const meeting_item_action_attendee = {
+      meeting_item: meeting_item,
+      meeting_item_action: meeting_item_action,
+      meeting_attendee: meeting_attendee
+    }
+
+    handleCreateMeetingItemWithAttendees(meeting_item_action_attendee);
     onClose();
   };
 
@@ -133,6 +202,7 @@ const AddMeetingItemSideSheet = ({ open, onClose, }) => {
             label="Due Date"
             id="Due Date"
             name="due_date"
+            variant="outlined"
           />
         </Box>
         <Box sx={{ display: 'flex', direction: 'column', gap: '1rem', justifyContent: 'center' }}>
@@ -205,3 +275,4 @@ const AddMeetingItemSideSheet = ({ open, onClose, }) => {
 };
 
 export default AddMeetingItemSideSheet;
+

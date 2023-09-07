@@ -22,7 +22,7 @@ import AttendeesTab from './AttendeesTab';
 import CorrespondenceTab from './CorrespondenceTab';
 
 import EditAttendeesSideSheet from './EditAttendeesSideSheet';
-
+import AddMeetingItemSideSheet from './AddMeetingItemSideSheet';
 const Meeting = (props) => {
   const { match, ...other } = props;
   const { params } = match;
@@ -233,6 +233,7 @@ const Meeting = (props) => {
           oldBusiness={oldBusiness}
           newBusiness={newBusiness}
         />
+        <AddMeetingItemSideSheet refetchMeetingItems={refetchMeetingItems} meetingId={meetingId} meetingSeriesId={series?.id} open={minutesOpen} onClose={() => { setMinutesOpen(false) }}></AddMeetingItemSideSheet>
       </FluentTabPanel>
       <FluentTabPanel value={tabValue} index={1}>
         <AttendeesTab meetingAttendeeMeeting={meetingAttendeeMeeting} />
