@@ -10,8 +10,7 @@ import {
 } from '../../utils/redirect/ExternalRedirectUrlStorage';
 
 const AadCallback = props => {
-  // const localUrl = getStoredPath();
-  const localUrl = "https://localhost:3000";
+  const localUrl = getStoredPath();
   const externalUrl = getStoredExternalPath();
 
   clearStoredPath();
