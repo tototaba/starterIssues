@@ -22,7 +22,6 @@ const MeetingControls = (props) => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [meetingGroup, setMeetingGroup] = useState('');
   const { handleErrorSnackbar, handleSuccessSnackbar } = useHandleAxiosSnackbar();
-  const successAction = getSuccessAction(closeSnackbar);
   const history = useHistory();
 
   useEffect(() => {

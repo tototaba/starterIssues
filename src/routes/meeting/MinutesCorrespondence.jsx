@@ -16,7 +16,7 @@ import { Stack } from '@mui/material';
 import { AttachFile, SaveOutlined, DownloadOutlined, SendOutlined } from '@mui/icons-material';
 import { AttachIcon, SaveIcon, DownloadIcon, SendIcon } from '@fluentui/react-icons';
 import AltSubmitButton from '../../utils/AltSubmitButton';
-
+import DownloadButton from './DownloadButton';
 const MinutesCorrespondence = (props) => {
   const {
     correspondence,
@@ -43,14 +43,14 @@ const MinutesCorrespondence = (props) => {
 
   useEffect(() => {
     if (correspondence) {
-      setReviewAttachmentId(correspondence.review.correspondence.id);
-      setMinutesAttachmentId(correspondence.minutes.correspondence.id);
+      setReviewAttachmentId(correspondence.review.correspondence?.id);
+      setMinutesAttachmentId(correspondence.minutes.correspondence?.id);
 
       if (type === "Review") {
-        setComments(correspondence.review.correspondence.comments);
+        setComments(correspondence.review.correspondence?.comments);
       }
       else if (type === "Minutes") {
-        setComments(correspondence.minutes.correspondence.comments);
+        setComments(correspondence.minutes.correspondence?.comments);
       }
     }
   }, [correspondence, type]);
@@ -118,7 +118,7 @@ const MinutesCorrespondence = (props) => {
     });
     // console.log(response);
     if (response?.status === 201) {
-      handleSuccessSnackbar('Successfuly Added Ccs')
+      handleSuccessSnackbar('Successlly Added Ccs')
     }
   };
 
@@ -129,7 +129,7 @@ const MinutesCorrespondence = (props) => {
     });
     // console.log(response);
     if (response?.status === 204) {
-      handleSuccessSnackbar('Successfuly Deleted Ccs')
+      handleSuccessSnackbar('Successfully Deleted Ccs')
     }
   };
 
@@ -159,7 +159,7 @@ const MinutesCorrespondence = (props) => {
       });
       // console.log(response);
       if (response?.status === 200) {
-        handleSuccessSnackbar('Successfuly Saved Correspondence')
+        handleSuccessSnackbar('Successfully Saved Correspondence')
       }
 
       refetchCorrespondence();
@@ -209,6 +209,7 @@ const MinutesCorrespondence = (props) => {
 
   return (
     <Box>
+      <DownloadButton></DownloadButton>
       <Form onSubmit={handleOnSubmit} ref={formRef}>
         <Field
           component={TextField}

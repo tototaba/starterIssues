@@ -22,7 +22,6 @@ const EditMeetingSideSheet = (props) => {
   } = props;
   const [meeting, setMeeting] = useState(initialMeeting);
   const { handleErrorSnackbar, handleSuccessSnackbar } = useHandleAxiosSnackbar();
-  const successAction = getSuccessAction(closeSnackbar);
 
   useEffect(() => {
     setMeeting(initialMeeting);

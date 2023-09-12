@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box } from '@material-ui/core';
-import { 
+import {
   FluentTabPanel,
   PrimaryActionHeader,
   useAxiosGet,
@@ -13,7 +13,7 @@ const CorrespondenceTab = (props) => {
     attendees,
   } = props;
   const [tabValue, setTabValue] = useState(0);
-  const tabList = [{ label: 'DRAFT MINUTES CORRESPONDENCE' }, { label: 'FINL MINUTES CORRESPONDENCE' }];
+  const tabList = [{ label: 'DRAFT MINUTES CORRESPONDENCE' }, { label: 'FINAL MINUTES CORRESPONDENCE' }];
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
