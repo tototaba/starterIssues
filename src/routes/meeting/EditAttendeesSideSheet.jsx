@@ -179,12 +179,6 @@ const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 9
     onClose();
   };
 
-  const test = useCallback(() => {
-    console.log(attendeesMetaData)
-    console.log("🚀 ~ file: EditAttendeesSideSheet.jsx:184 ~ test ~ meetingAttendees:", meetingAttendees)
-    console.log("🚀 ~ file: EditAttendeesSideSheet.jsx:183 ~ test ~ meetingAttendeeMeeting:", meetingAttendeeMeeting)
-  }, [attendeesMetaData, meetingAttendeeMeeting]);
-
   return (
     <SideSheet
       onSubmit={handleSubmit}
@@ -214,7 +208,6 @@ const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 9
           setAttendeesMetaData={setAttendeesMetaData}
           attendeesMetaData={attendeesMetaData}
         />
-        <Button onClick={test}>test</Button>
       </Form>
     </SideSheet >
   );

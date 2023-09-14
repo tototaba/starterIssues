@@ -200,15 +200,8 @@ const Meeting = (props) => {
     }
   }, [meetingItems, series, meeting]);
 
-  const test = useCallback(() => {
-    console.log(meetingAttendeeMeeting);
-    console.log("🚀 ~ file: Meeting.jsx:206 ~ test ~ oldBusiness:", oldBusiness)
-    console.log("🚀 ~ file: Meeting.jsx:208 ~ test ~ newBusiness:", newBusiness)
-  }, [meetingAttendeeMeeting]);
-
   return (
     <Box>
-      <button onClick={test}>test</button>
       <SubHeaderAction>
         <MeetingHeader
           chipData={chipData}

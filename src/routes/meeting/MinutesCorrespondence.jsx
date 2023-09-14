@@ -5,18 +5,18 @@ import {
   SubmitButton,
   FluentTextFieldAutoComplete,
   FluentButton,
-  apiMutate,
   useAxiosGet,
   useUser,
-  useHandleAxiosSnackbar
+  useHandleAxiosSnackbar,
+  apiMutate
 } from 'unity-fluent-library';
+import axios from 'axios';
 import { Box, TextField } from '@material-ui/core'
 import RichTextEditor from '../../UI/RichTextEditor';
 import { Stack } from '@mui/material';
-import { AttachFile, SaveOutlined, DownloadOutlined, SendOutlined } from '@mui/icons-material';
 import { AttachIcon, SaveIcon, DownloadIcon, SendIcon } from '@fluentui/react-icons';
 import AltSubmitButton from '../../utils/AltSubmitButton';
-import DownloadButton from './DownloadButton';
+import { handleError } from '@apollo/client/link/http/parseAndCheckHttpResponse';
 const MinutesCorrespondence = (props) => {
   const {
     correspondence,
@@ -101,7 +101,7 @@ const MinutesCorrespondence = (props) => {
 
     if (type == "Review") {
       ccsToAdd = formValues.cc.filter(r => !correspondence.review.ccRecipients.includes(r));
-      ccsToDelete = correspondence.review.ccRecipients.filter(r => !formValues.cc.includes(r));
+      ccsToDelete = correspondence?.review?.ccRecipients?.filter(r => !formValues.cc.includes(r));
 
     } else if (type == "Minutes") {
       ccsToAdd = formValues.cc.filter(r => !correspondence.minutes.ccRecipients.includes(r));
@@ -113,10 +113,8 @@ const MinutesCorrespondence = (props) => {
 
   const postCcs = async (ccsToAdd) => {
     const response = await postAttachmentCcs(ccsToAdd).catch(res => {
-      // console.log(res);
-
+      handleErrorSnackbar("", "Error Adding Ccs")
     });
-    // console.log(response);
     if (response?.status === 201) {
       handleSuccessSnackbar('Successlly Added Ccs')
     }
@@ -124,10 +122,8 @@ const MinutesCorrespondence = (props) => {
 
   const deleteCcs = async (ccsToDelete) => {
     const response = await deleteAttachmentCcs(ccsToDelete).catch(res => {
-      // console.log(res);
       handleErrorSnackbar("", 'Error Deleting Ccs')
     });
-    // console.log(response);
     if (response?.status === 204) {
       handleSuccessSnackbar('Successfully Deleted Ccs')
     }
@@ -154,10 +150,8 @@ const MinutesCorrespondence = (props) => {
         "recipients": values.recipients
       }
       const response = await submitCorrespondence(request).catch(res => {
-        // console.log(res);
         handleErrorSnackbar("", 'Error Saving Correspondence')
       });
-      // console.log(response);
       if (response?.status === 200) {
         handleSuccessSnackbar('Successfully Saved Correspondence')
       }
@@ -165,11 +159,10 @@ const MinutesCorrespondence = (props) => {
       refetchCorrespondence();
 
     } else if (values.action === "download") {
+      handleDownloadPdf(values);
 
     } else if (values.action === "send") {
-
     }
-
     refetchCorrespondence();
   });
 
@@ -207,9 +200,47 @@ const MinutesCorrespondence = (props) => {
     return [];
   }, [correspondence, type]);
 
+  const downloadPdf = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_PRODUCTIVITY_API_BASE}/CpsCorrespondence_action/createpdf`, {
+        responseType: 'blob'
+      });
+
+      const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.setAttribute('download', PDFFilename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Error downloading the file:', error);
+    }
+  };
+
+  const handleDownloadPdf = async (values) => {
+    try {
+      const response = await apiMutate(process.env.REACT_APP_PRODUCTIVITY_API_BASE,
+        'CpsCorrespondence_action/createpdf',
+        {
+          responseType: 'blob',
+          method: 'get'
+        })
+
+      const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.setAttribute('download', values.PDF_filename + ".pdf");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Error downloading the file:', error);
+    }
+  }
+
   return (
     <Box>
-      <DownloadButton></DownloadButton>
       <Form onSubmit={handleOnSubmit} ref={formRef}>
         <Field
           component={TextField}
@@ -217,6 +248,7 @@ const MinutesCorrespondence = (props) => {
           name='PDF_filename'
           id='PDF Filename'
           initialValue={PDFFilename}
+          required
         />
         <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", alignItems: 'center', marginBottom: '1rem' }}>
           <Field
