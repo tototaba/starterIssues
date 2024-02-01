@@ -1,51 +1,71 @@
-import { EditIcon } from '@fluentui/react-icons';
-import { Box, Accordion } from '@material-ui/core';
-import React, { useEffect, useMemo, useState } from 'react';
+import { DeleteIcon, EditIcon } from '@fluentui/react-icons';
+import { Box, Accordion, Typography, makeStyles } from '@material-ui/core';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { ActionsRenderer, AmbientGridTemplate, apiMutate, useAxiosGet, useUser } from 'unity-fluent-library';
-
+import AddMeetingItemSideSheet from './AddMeetingItemSideSheet';
+import MeetingItemsRenderer from './MeetingItems/MeetingItemsRenderer';
+import ModalAlert from '../../UI/ModalAlert';
 
 const MinutesTab = (props) => {
   const {
     meeting,
-    oldBusiness,
-    newBusiness,
+    setSideSheetOpen,
+    setMeetingItem,
+    setIsEdit,
+    categories,
+    refetchCategories,
+    handleCategoryCreate,
+    isEdit,
+    selectedMeetingItem,
+    meetingId,
+    series,
+    setMinutesOpen,
+    minutesOpen,
+    meetingItems,
+    refetchMeetingItems,
+    meetingDate
   } = props;
-
-  const fetchMeetingItems = async () => {
-    try {
-      const response = await apiMutate(
-        REACT_APP_PRODUCTIVITY_API_BASE,
-        "cpsmeeting_item",
-        {
-          method: "GET"
-        });
-      setMeetingItems(response.data)
-      const formattedDates = response.data.map(item => {
-        return {
-          ...item,
-          due_date: new Date(item.due_date).toLocaleDateString(),
-        }
-      })
-      const newBusiness = [];
-      const oldBusiness = [];
-
-      formattedDates.forEach(item => {
-        if (item.meeting_created === meeting?.id && item.group_id === meeting?.group_id) {
-          newBusiness.push(item);
-        } else if (item.group_id === meeting?.group_id && new Date(item.open_date) < new Date(meeting?.date)) {
-          oldBusiness.push(item);
-        }
-      });
-      setNewBusiness(newBusiness);
-      setOldBusiness(oldBusiness);
-    } catch (error) {
-      // console.log(error);
+  const [newBusiness, setNewBusiness] = useState([]);
+  const [oldBusiness, setOldBusiness] = useState([]);
+  const [deleteMeetingItemOpen, setDeleteMeetingItemOpen] = useState(false);
+  useEffect(() => {
+    refetchMeetingItems();
+  }, [meetingId]);
+  useEffect(() => {
+    if (!meetingItems) {
+      return;
     }
+    const [oldBusiness, newBusiness] = meetingItems;
+    setOldBusiness(oldBusiness ?? []);
+    setNewBusiness(newBusiness ?? []);
+  }, [meetingItems, setOldBusiness, setNewBusiness, newBusiness, oldBusiness]);
+
+  const deleteItem = useCallback(async () => {
+    if (selectedMeetingItem) {
+      const response = await apiMutate(
+        process.env.REACT_APP_MEETING_MINUTES_API_BASE,
+        `cpsmeeting_item/${selectedMeetingItem.item_id}`,
+        {
+          method: 'delete',
+        }
+      )
+      if (response?.status === 204) {
+        await refetchMeetingItems();
+        setDeleteMeetingItemOpen(false);
+      }
+    }
+  }, [selectedMeetingItem, refetchMeetingItems]);
+
+  const handleEdit = (item) => {
+    setIsEdit(true);
+    setSideSheetOpen(true);
+    setMeetingItem(item);
   }
 
-  useEffect(() => {
-    fetchMeetingItems();
-  }, [meeting])
+  const handleDelete = (item) => {
+    setDeleteMeetingItemOpen(true);
+    setMeetingItem(item);
+  }
 
   const actionList = useMemo(
     () => [
@@ -53,34 +73,154 @@ const MinutesTab = (props) => {
         id: 1,
         title: 'Edit',
         icon: EditIcon,
-        // onClick: handleEdit,
+        onClick: handleEdit,
+        disabled: false
+      },
+      {
+        id: 2,
+        title: 'Delete',
+        icon: DeleteIcon,
+        onClick: handleDelete,
         disabled: false
       }
     ],
     []
   );
 
-  const gridOptions = {
+  const gridOptionsOldBusiness = {
     defaultColDef: {
       resizable: true,
       sortable: true,
     },
+    onFirstDataRendered: function (params) {
+      params.api.expandAll();
+    },
+    autoGroupColumnDef: {
+      headerName: 'Category', 
+      width: 100,
+      hide: true,
+    },
+    groupDisplayType: 'groupRows',
+    groupRowRenderer: 'agGroupCellRenderer',
+    groupDefaultExpanded: 1, // Set the default number of levels to expand
     columnDefs: [
-      // { headerName: '#', field: 'item_number', },
-      { headerName: 'Item', field: 'subject', },
-      { headerName: 'Due Date', field: 'due_date', },
-      { headerName: 'Priority', field: 'priority', },
-      { headerName: 'Owner', field: 'created_by', },
-      // { headerName: 'Status', field: 'status', },
+      { 
+        field: 'category_title', 
+        rowGroup: true, 
+        hide: true,
+      }, 
+      {
+        headerName: '#',
+        field: 'item_meeting_number',
+        width: 10,
+      },
+      {
+        headerName: 'Item',
+        field: 'subject',
+        width: 200,
+        autoHeight: true,
+        wrapText: true,
+        cellRenderer: 'meetingItemsRenderer',
+      },
+      {
+        headerName: 'Due Date',
+        field: 'due_date',
+        width: 70,
+      },
+      {
+        headerName: 'Priority',
+        field: 'priority',
+        width: 60,
+      },
+      {
+        headerName: 'Owner',
+        field: 'owner',
+        width: 100,
+      },
+      {
+        headerName: 'Status',
+        field: 'status',
+        width: 60,
+      },
       {
         headerName: 'Actions',
         cellRenderer: 'actionsRenderer',
         cellRendererParams: {
-          actionList
+          actionList,
         },
+        width: 60,
         suppressMenu: true,
-      }
-    ],
+
+      },
+    ]
+  };
+
+  const gridOptionsNewBusiness = {
+    defaultColDef: {
+      resizable: true,
+      sortable: true,
+    },
+    onFirstDataRendered: function (params) {
+      params.api.expandAll();
+    },
+    autoGroupColumnDef: {
+      headerName: 'Category', 
+      width: 100,
+      hide: true,
+    },
+    groupDisplayType: 'groupRows',
+    groupRowRenderer: 'agGroupCellRenderer',
+    groupDefaultExpanded: 1, // Set the default number of levels to expand
+    columnDefs: [
+      { 
+        field: 'category_title', 
+        rowGroup: true, 
+        hide: true,
+      }, 
+      {
+        headerName: '#',
+        field: 'item_meeting_number',
+        width: 10,
+      },
+      {
+        headerName: 'Item',
+        field: 'subject',
+        width: 200,
+        autoHeight: true,
+        wrapText: true,
+        cellRenderer: 'meetingItemsRenderer',
+      },
+      {
+        headerName: 'Due Date',
+        field: 'due_date',
+        width: 70,
+      },
+      {
+        headerName: 'Priority',
+        field: 'priority',
+        width: 60,
+      },
+      {
+        headerName: 'Owner',
+        field: 'owner',
+        width: 100,
+      },
+      {
+        headerName: 'Status',
+        field: 'status',
+        width: 60,
+      },
+      {
+        headerName: 'Actions',
+        cellRenderer: 'actionsRenderer',
+        cellRendererParams: {
+          actionList,
+        },
+        width: 60,
+        suppressMenu: true,
+
+      },
+    ]
   };
 
   return (
@@ -89,28 +229,45 @@ const MinutesTab = (props) => {
         display: 'flex',
         flexDirection: 'column',
       }}>
+      <ModalAlert
+        open={deleteMeetingItemOpen}
+        title='Delete Meeting Item'
+        message='Are you sure you want to delete this meeting item?'
+        action={deleteItem}
+        closeAlert={() => setDeleteMeetingItemOpen(false)}
+      />
       <AmbientGridTemplate
         title='Old Business'
-        // primaryActionButton={addMeetingSeriesButton}
-        gridOptions={gridOptions}
+        gridOptions={gridOptionsOldBusiness}
         animateRows='true'
         domLayout='autoHeight'
         data={oldBusiness}
-        // loading={meetingItemsLoading}
-        // useNewHeader
+        useNewHeader
         height={"calc(100vh / 3 + 56)"}
-        frameworkComponents={{ actionsRenderer: ActionsRenderer }}
+        frameworkComponents={{ actionsRenderer: ActionsRenderer, meetingItemsRenderer: MeetingItemsRenderer, }}
       />
       <AmbientGridTemplate
         title='New Business'
         height={"calc(100vh / 3)"}
-        // primaryActionButton={addMeetingSeriesButton}
-        gridOptions={gridOptions}
+        gridOptions={gridOptionsNewBusiness}
         data={newBusiness}
+        useNewHeader
         domLayout='autoHeight'
-        // loading={loading}
-        // useNewHeader
-        frameworkComponents={{ actionsRenderer: ActionsRenderer }}
+        frameworkComponents={{ actionsRenderer: ActionsRenderer, meetingItemsRenderer: MeetingItemsRenderer, }}
+      />
+      <AddMeetingItemSideSheet
+        categories={categories}
+        refetchCategories={refetchCategories}
+        handleCategoryCreate={handleCategoryCreate}
+        isEdit={isEdit}
+        selectedMeetingItem={selectedMeetingItem}
+        refetchMeetingItems={refetchMeetingItems}
+        meeting={meeting}
+        meetingId={meetingId}
+        meetingSeriesId={series?.id}
+        meetingDate={meetingDate}
+        open={minutesOpen}
+        onClose={() => { setMinutesOpen(false) }}
       />
     </Box>
   );

@@ -4,61 +4,92 @@ import {
   // FluentTextFieldAutoComplete,
   Form,
   Field,
-  SubmitButton,
-  FluentDatePicker,
-  FluentTimePicker,
-  TimeField,
-  FluentTextField,
-  FluentSelectMenu,
-  FormButtons,
   FluentTextFieldAutoComplete,
   apiMutate,
   useHandleAxiosSnackbar,
-  AmbientStepper,
-  FluentButton,
+  useAxiosGet,
+  useUser,
+  useOutlook
 } from "unity-fluent-library"
-import {
-  Box,
-  Button,
-  TextField,
-  responsiveFontSizes
-} from '@material-ui/core';
 import AttendeesGrid from './AttendeesGrid';
-import MeetingItemFormPropertyTable from '../../utils/MeeingItemFormPropertyTable';
-const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 96, meetingAttendeeMeeting, fetchMeeting }) => {
-  // selectedMeetingSeries = { id: 31, name: "Series 1", cpsMeeting_groupCpsMeeting: [0, 1, 0, { location: "Univerus Head Office" }] }
+const EditAttendeesSideSheet = ({
+  open,
+  onClose,
+  meetingAttendees,
+  meetingId,
+  meetingAttendeeMeeting,
+  refetchMeetingAttendees,
+  refetchMeetingAttendeeMeetings,
+  meetingSeriesId
+}) => {
   const formRef = useRef(null);
   const [attendeesMetaData, setAttendeesMetaData] = useState();
+  const [outlookAccessToken, setOutlookAccessToken] = useState();
   const { handleErrorSnackbar, handleSuccessSnackbar } =
     useHandleAxiosSnackbar();
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
+  const user = useUser();
+  const { getAccessToken, invalidateUserSession, login, isUserSignedIn } = useOutlook(process.env.REACT_APP_MINUTES_URL + "/callback");
+  const [{ data: tenantUsers }, refetchTenantUsers] = useAxiosGet(
+    process.env.REACT_APP_SECURITY_API_BASE,
+    `users?tenantId=${user?.currentTenantId}&includeOnlyActiveTenants=true`,
+    {},
+    !!!user?.id
+  );
 
-  const getAddedAndRemoved = () => {
-    const values = formRef.current.values.users;
-    const initialMeetingAttendees = meetingAttendeeMeeting;
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const token = await getAccessToken();
+        setOutlookAccessToken(token);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetch();
+  }, [setOutlookAccessToken]);
+
+  useEffect(() => {
+
+    if (!meetingAttendees || !tenantUsers) {
+      return;
+    }
+    for (let user of tenantUsers) {
+      if (!(meetingAttendees.some(attendee => attendee.user_id === user.unityId))) {
+        meetingAttendees.push({
+          user_id: user.unityId,
+          first_name: user.givenName,
+          last_name: user.surname,
+          group_id: meetingSeriesId,
+          email: user.email,
+          name: `${user.givenName} ${user.surname}`,
+        });
+      }
+    }
+  }, [meetingAttendees, tenantUsers, meetingSeriesId]);
+
+  const getAddedAndRemoved = (formValues, initialMeetingAttendees) => {
+    const values = formValues.users;
     const addedAttendees = [];
     const removedAttendees = [];
-    const updatedAttendees = [];
-
+    const addedAttendeesWithNoId = [];
     const initialMap = new Map();
-    for (let i = 0; i < initialMeetingAttendees.length; i++) {
-      const item = initialMeetingAttendees[i];
+    initialMeetingAttendees.forEach((item) => {
       const key = `${item.attendee_id}`;
       initialMap.set(key, item);
-    }
+    });
 
     const currentMap = new Map();
-    for (let i = 0; i < values.length; i++) {
-      const item = values[i];
-      const key = `${item.id}`;
+    values.forEach((item) => {
+      const key = `${item.attendee_id}`;
       currentMap.set(key, item);
-    }
+    });
+
     // Check for added attendees
     currentMap.forEach((currentAttendee, key) => {
-      if (!initialMap.has(key)) {
+      if (!initialMap.has(key) && currentAttendee.attendee_id) {
         addedAttendees.push(currentAttendee);
+      } else if (!initialMap.has(key) && !currentAttendee.attendee_id) {
+        addedAttendeesWithNoId.push(currentAttendee);
       }
     });
 
@@ -69,69 +100,111 @@ const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 9
       }
     });
 
-    return { addedAttendees, removedAttendees };
 
-  }
+    return { addedAttendees, removedAttendees, addedAttendeesWithNoId };
+  };
 
-  const deleteMeetingAttendeeMeetings = async (attendees) => {
+
+  const deleteMeetingAttendeeMeetings = useCallback(async (attendees) => {
     try {
       const response = await apiMutate(
-        process.env.REACT_APP_PRODUCTIVITY_API_BASE,
+        process.env.REACT_APP_MEETING_MINUTES_API_BASE,
         "CpsMeeting_attendee_meeting/deleteMultiple",
         {
-          method: "DELETE"
+          method: "DELETE",
+          headers: {
+            "outlookAccessToken": outlookAccessToken
+          }
         },
-        { data: attendees }
+        { data: attendees },
+
       );
     } catch (error) {
       throw error;
     }
-  }
+  }, [outlookAccessToken])
 
-  const addMeetingAttendeeMeetings = async (attendees) => {
+  const addMeetingAttendees = useCallback(async (attendees) => {
     try {
       const response = await apiMutate(
-        process.env.REACT_APP_PRODUCTIVITY_API_BASE,
+        process.env.REACT_APP_MEETING_MINUTES_API_BASE,
+        "CpsMeeting_attendee/createAttendees",
+        {
+          method: "POST",
+          headers: {
+            "outlookAccessToken": outlookAccessToken
+          }
+        },
+        { data: attendees }
+      );
+      return response;
+    } catch (error) {
+      handleErrorSnackbar("", "Error Creating attendees")
+    }
+  }, [outlookAccessToken])
+
+  const addMeetingAttendeeMeetings = useCallback(async (attendees) => {
+    try {
+      const response = await apiMutate(
+        process.env.REACT_APP_MEETING_MINUTES_API_BASE,
         "CpsMeeting_attendee_meeting/CreateMultiple",
         {
-          method: "POST"
+          method: "POST",
+          headers: {
+            "outlookAccessToken": outlookAccessToken
+          }
         },
         { data: attendees }
       );
     } catch (error) {
-      console.log(error)
+      handleErrorSnackbar("", "Error adding attendees")
     }
-  }
+  }, [outlookAccessToken])
 
-  const updateMeetingAttendeeMeetings = async (attendees) => {
+  const updateMeetingAttendeeMeetings = useCallback(async (attendees) => {
     try {
       const response = await apiMutate(
-        process.env.REACT_APP_PRODUCTIVITY_API_BASE,
+        process.env.REACT_APP_MEETING_MINUTES_API_BASE,
         "CpsMeeting_attendee_meeting/updateMultiple",
         {
-          method: "PUT"
+          method: "PUT",
+          headers: {
+            "outlookAccessToken": outlookAccessToken
+          }
         },
         { data: attendees }
       );
     } catch (error) {
-      console.log(error)
+      handleErrorSnackbar("", "Error updating attendees")
     }
-  }
+  }, [outlookAccessToken])
 
   const handleSubmit = async (values) => {
     try {
-      const { addedAttendees, removedAttendees } = getAddedAndRemoved();
+      const { addedAttendees, removedAttendees, addedAttendeesWithNoId } = getAddedAndRemoved(formRef.current.values, meetingAttendeeMeeting);
 
-      if (addedAttendees.length !== 0) {
-        const addedAttendeeMeetingAttendee = addedAttendees.map((attendee) => {
-          return { Attendee_id: attendee.id, Meeting_id: meetingId }
+      // First if statement: Handle attendees with no ID and add them to the addedAttendees array
+      if (addedAttendeesWithNoId.length !== 0) {
+        const createdMeetingAttendees = await addMeetingAttendees(addedAttendeesWithNoId);
+        createdMeetingAttendees.data.forEach(meetingAttendee => {
+          addedAttendees.push({ id: meetingAttendee.id });
         });
+      }
+
+      // Preparing the association array for all attendees
+      const addedAttendeeMeetingAttendee = addedAttendees.map((attendee) => {
+        return { Attendee_id: attendee.id, Meeting_id: meetingId };
+      });
+
+      // Call addMeetingAttendeeMeetings if there are any attendees to be associated with the meeting
+      if (addedAttendees.length !== 0) {
         await addMeetingAttendeeMeetings(addedAttendeeMeetingAttendee);
       }
 
+
       if (removedAttendees.length !== 0) {
         const removedAttendeeMeetingAttendee = removedAttendees.map((attendee) => {
-          return { Attendee_id: attendee.id, Meeting_id: meetingId }
+          return { Attendee_id: attendee.attendee_id, Meeting_id: meetingId }
         });
         await deleteMeetingAttendeeMeetings(removedAttendeeMeetingAttendee);
       }
@@ -144,18 +217,21 @@ const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 9
             meeting_id: meetingId,
             send_review: attendeesMetaData[key].send_review ? 1 : 0,
             send_minutes: attendeesMetaData[key].send_minutes ? 1 : 0,
+            attended: attendeesMetaData[key].attended ? 1 : 0,
+            prepared_by: attendeesMetaData[key].prepared_by ? 1 : 0
           });
         });
+
       }
       if (updatedAttendees.length !== 0) {
         await updateMeetingAttendeeMeetings(updatedAttendees)
       }
 
-      fetchMeeting();
+      refetchMeetingAttendees();
+      refetchMeetingAttendeeMeetings();
       handleSuccessSnackbar("Attendees updated successfully")
       onClose();
     } catch (error) {
-      console.log(error)
       handleErrorSnackbar(error, "Error updating attendees")
     }
 
@@ -165,9 +241,8 @@ const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 9
     const newAttendeesMetaData = {};
     if (meetingAttendeeMeeting) {
       meetingAttendeeMeeting.forEach(row => {
-        newAttendeesMetaData[row.id] = {
-          send_review: row.send_review,
-          send_minutes: row.send_minutes
+        newAttendeesMetaData[row.attendee_id] = {
+          ...row,
         };
       });
     }
@@ -186,7 +261,7 @@ const EditAttendeesSideSheet = ({ open, onClose, meetingAttendees, meetingId = 9
       title="Manage Attendees"
       onClose={handleClose}
       open={open}
-      width={"600px"}
+      width={"800px"}
     >
       <Form onSubmit={handleSubmit} ref={formRef}>
         <Field

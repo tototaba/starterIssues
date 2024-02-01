@@ -1,56 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { FluentIconButton, SideSheet } from 'unity-fluent-library';
+import SettingsSideSheet from '../components/SettingsSideSheet';
 import { makeStyles } from '@material-ui/core';
+import { SettingsIcon } from '@fluentui/react-icons';
 
 const useStyles = makeStyles(theme => ({
   root: {
     marginLeft: theme.spacing(14),
     display: 'flex',
-    flexDirection: 'row',
+    justifyContent: 'flex-end', // This will align children to the right
   },
   label: {
     color: theme.palette.getContrastText(theme.palette.common.black),
   },
-  left: {
-    flex: 1,
-    width: '100%',
-  },
   right: {
     display: 'flex',
     width: 150,
-    justifyContent: 'space-around',
+    justifyContent: 'right',
   },
 }));
 
 const AppBarControls = props => {
   const classes = useStyles();
-
+  const [sideSheetOpen, setSideSheetOpen] = useState(false);
   return (
     <div className={classes.root}>
-      {/* <div className={classes.left}>
-        <FluentIconButton
-          aria-label="search"
-          className={classes.label}
-          icon={SearchIcon}
-        />
-      </div>
       <div className={classes.right}>
-        <FluentIconButton
-          aria-label="report"
-          className={classes.label}
-          icon={BookmarkReportIcon}
-        />
+
         <FluentIconButton
           aria-label="robot"
           className={classes.label}
-          icon={RobotIcon}
+          icon={SettingsIcon}
+          onClick={() => setSideSheetOpen(true)}
         />
-        <FluentIconButton
-          aria-label="lab"
-          className={classes.label}
-          icon={TestBeakerIcon}
+        <SettingsSideSheet
+          isOpen={sideSheetOpen}
+          onClose={() => setSideSheetOpen(false)}
         />
-      </div> */}
+      </div>
     </div>
   );
 };
+
 export default AppBarControls;
+

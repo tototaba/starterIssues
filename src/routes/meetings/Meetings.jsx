@@ -3,7 +3,6 @@ import {
   AmbientGridTemplate,
   ActionsRenderer,
   PrimaryActionButton,
-  apiMutate,
   useAgGridApi,
   useAxiosGet,
   useUser,
@@ -15,6 +14,7 @@ import {
   AddIcon,
 } from '@fluentui/react-icons';
 import { Typography } from '@material-ui/core';
+import { formatDate, formatDateString } from '../../utils/formatDateHelpers';
 import { useHistory } from 'react-router-dom';
 import CreateMeetingSideSheet from '../meeting/CreateMeetingSideSheet';
 
@@ -29,9 +29,8 @@ const Meetings = (props) => {
   const [meetings, setMeetings] = useState([]);
   const user = useUser();
 
-  // fetch Meeting here
   const [{ data: meetingSeries }, refetchMeetingSeries] = useAxiosGet(
-    process.env.REACT_APP_PRODUCTIVITY_API_BASE,
+    process.env.REACT_APP_MEETING_MINUTES_API_BASE,
     `cpsmeeting_group/${meetingSeriesId}/full`,
     {},
   );
@@ -72,7 +71,7 @@ const Meetings = (props) => {
         icon: ContactIcon,
         // onClick: handleManage,
         disabled: false
-      }
+      },
     ],
     []
   );
@@ -88,18 +87,29 @@ const Meetings = (props) => {
     columnDefs: [
       { headerName: 'Title', field: 'title', },
       { headerName: 'Meeting #', field: 'meeting_number', },
-      { headerName: 'Date', field: 'date', },
-      { headerName: 'Location', field: 'location', },
-      { headerName: 'Draft Sent', field: 'draft_sent', },
-      { headerName: 'Final Sent', field: 'final_sent', },
       {
-        headerName: 'Actions',
-        cellRenderer: 'actionsRenderer',
-        cellRendererParams: {
-          actionList
-        },
-        suppressMenu: true,
-      }
+        headerName: 'Date',
+        field: 'date',
+        // valueGetter: formatDateString
+      },
+      { headerName: 'Location', field: 'location', },
+      { headerName: "Start Time", field: "start_time", },
+      { headerName: "End Time", field: "end_time", },
+      {
+        headerName: "Outlook Synced", field: "outlookEventId",
+
+        valueGetter: (params) => {
+          return params.data.outlookEventId ? "Yes" : "No"
+        }
+      },
+      // {
+      //   headerName: 'Actions',
+      //   cellRenderer: 'actionsRenderer',
+      //   cellRendererParams: {
+      //     actionList
+      //   },
+      //   suppressMenu: true,
+      // }
     ],
   };
 
@@ -107,7 +117,10 @@ const Meetings = (props) => {
     event => {
       let selectedMeeting = event.data;
       if (selectedMeeting) {
-        history.push(`/meetings/${meetingSeriesId}/meeting/${selectedMeeting.id}`)
+        history.push({
+          pathname: `/meetings/${meetingSeriesId}/meeting/${selectedMeeting.id}`,
+          state: { meeting: meetings }
+        })
       }
     },
     [gridApi, history]
@@ -131,6 +144,7 @@ const Meetings = (props) => {
         open={open}
         onClose={handleOnClose}
         tenantUsers={tenantUsers}
+        meetingSeries={meetingSeries}
       />
       <AmbientGridTemplate
         title='Meetings'
@@ -139,6 +153,7 @@ const Meetings = (props) => {
         onRowSelected={handleRowSelected}
         onRowClicked={handleRowSelected}
         rowSelection="single"
+        height="calc(100vh - 112px)"
         data={meetings}
         loading={loading}
         hideGroupTab

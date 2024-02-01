@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Field,
   Form,
@@ -9,7 +9,10 @@ import {
   SubmitButton,
   apiMutate,
   FluentButton,
-  useHandleAxiosSnackbar
+  useHandleAxiosSnackbar,
+  useUser,
+  useAxiosGet,
+  useAxiosMutate,
 } from 'unity-fluent-library';
 import {
   TextField,
@@ -17,37 +20,72 @@ import {
   Chip,
 } from '@material-ui/core';
 import { Stack } from '@mui/material';
-import { handleError } from '@apollo/client/link/http/parseAndCheckHttpResponse';
+import CategoryManager from './CategoryManager';
+import { formatDate } from "../../utils/formatDateHelpers";
+import Meeting from './Meeting';
 
-const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, refetchMeetingItems }) => {
+
+const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, refetchMeetingItems, selectedMeetingItem, isEdit, handleCategoryCreate, refetchCategories, categories, meeting, meetingDate }) => {
   const formRef = useRef(null);
-  const [users, setUsers] = useState([]);
-  const [createdBy, setCreatedBy] = useState('N/A');
-  const [createdOn, setCreatedOn] = useState('N/A');
-  const [updatedBy, setUpdatedBy] = useState('N/A');
-  const [updatedOn, setUpdatedOn] = useState('N/A');
+  const user = useUser();
+  const [CreateCategoryOpen, setCreateCategoryOpen] = useState(false);
+  const [ManageCategoriesOpen, setManageCategoriesOpen] = useState(false);
   const { handleErrorSnackbar, handleSuccessSnackbar } = useHandleAxiosSnackbar();
-  const fetchUsers = async () => {
-    try {
-      const response = await apiMutate(
-        process.env.REACT_APP_PRODUCTIVITY_API_BASE,
-        "cpsuser",
+
+  const searchData = useMemo(() => ({
+    data: {
+      pageNumber: 1,
+      pageSize: 30,
+      orderElements: [
         {
-          method: "GET"
-        });
-      const users = response.data;
-      for (let user of users) {
-        user.name = user.first_name + " " + user.last_name;
-      }
-      setUsers([...users])
-    } catch (error) {
-      console.log(error);
-    }
-  };
+          sortColumn: "id",
+          sortDirection: "ASC",
+        },
+      ],
+      filterElements: [
+        {
+          searchField: "group_id",
+          searchValue: meetingSeriesId,
+          searchOperator: "=",
+        },
+      ],
+    },
+    method: "POST",
+  }), [meetingSeriesId]);
+
+  const [
+    {
+      data: meeting_attendees,
+      loading: loading,
+      error: error,
+    },
+    fetchMeetingAttendees,
+  ] = useAxiosMutate(
+    process.env.REACT_APP_MEETING_MINUTES_API_BASE,
+    "cpsMeeting_attendee/search",
+    searchData
+  );
 
   useEffect(() => {
-    fetchUsers();
-  }, [open])
+    const fetchData = async () => {
+      try {
+        const attendeesData = await fetchMeetingAttendees();
+      } catch (error) {
+        console.error('Error fetching meeting attendees:', error);
+      }
+    };
+    fetchData();
+  }, [fetchMeetingAttendees]);
+
+  const meetingAttendeesFirstName = useMemo(() => {
+    if (!meeting_attendees) return [];
+    return meeting_attendees.pageList?.map((attendee) => {
+      return {
+        ...attendee,
+        name: attendee?.first_name + " " + attendee?.last_name,
+      };
+    });
+  }, [meeting_attendees]);
 
   function convertUTCToDateString(utcTimestamp) {
     const date = new Date(utcTimestamp);
@@ -59,42 +97,72 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
     return formattedDate;
   }
 
-  async function handleCreateMeetingItemWithAttendees(meeting_item_action_attendee) {
+  async function handleMeetingItemWithAttendeesAction(meeting_item_action_attendee, actionType) {
+    const actionPaths = {
+      create: "CpsMeeting_item/createCpsMeetingItem",
+      update: "CpsMeeting_item/updateCpsMeetingItem"
+    };
+
+    const actionMessages = {
+      create: {
+        success: "Successfully added Meeting Item",
+        error: "Error adding Meeting Item"
+      },
+      update: {
+        success: "Successfully updated Meeting Item",
+        error: "Error updating Meeting Item"
+      }
+    };
+
+    const path = actionPaths[actionType];
+    const messages = actionMessages[actionType];
+
+    if (!path || !messages) {
+      handleErrorSnackbar("", "Error adding Meeting Item")
+      return;
+    }
+
     try {
       const data = {
         data: meeting_item_action_attendee,
-        method: "POST"
+        method: isEdit ? "PUT" : "POST"
       }
 
       const response = await apiMutate(
-        process.env.REACT_APP_PRODUCTIVITY_API_BASE,
-        "CpsMeeting_item/createCpsMeetingItem",
+        process.env.REACT_APP_MEETING_MINUTES_API_BASE,
+        path,
         data
       );
+
       refetchMeetingItems();
-      handleSuccessSnackbar("Successfully added Meeting Item")
+      handleSuccessSnackbar(messages.success);
     } catch (error) {
-      console.log(error);
-      handleErrorSnackbar("", "Error adding Meeting Item");
+      handleErrorSnackbar("", messages.error);
     }
   }
-
 
   const handleSubmit = values => {
     var date = convertUTCToDateString(Date.now());
 
     const meeting_item =
     {
+      Id: isEdit ? selectedMeetingItem?.item_id : 0,
       group_id: meetingSeriesId,
-      meeting_created: meetingId, //meeting_id
+      meeting_created: isEdit ? selectedMeetingItem?.meeting_created : meeting.meeting_number,
+      meeting_created_id: isEdit ? selectedMeetingItem?.meeting_created_id : meetingId,
       open_date: date,
       due_date: values.due_date,
       is_persistant: 0,
       is_section: 0,
-      created_by: "",
+      created_by: isEdit ? selectedMeetingItem?.created_by : user?.name,
       created_on: date,
+      updated_by: isEdit ? user?.name : null,
       subject: values.subject,
       priority: values.priority,
+      description: values.description,
+      status: values.status,
+      category_id: values.category?.id,
+      item_number: isEdit ? selectedMeetingItem?.item_number : null,
     }
 
     const meeting_item_action =
@@ -102,12 +170,11 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
       meeting_id: meetingId,
       action_taken: values.action_taken,
       action_date: values.action_date,
-      status: values.status
     }
 
     const meeting_attendee =
     {
-      id: values.owner.id, //attendee+id
+      id: values.owner?.id, //attendee+id
       group_id: meetingSeriesId,
       meeting_number: meetingId
     }
@@ -115,78 +182,109 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
     const meeting_item_action_attendee = {
       meeting_item: meeting_item,
       meeting_item_action: meeting_item_action,
-      meeting_attendee: meeting_attendee
+      meeting_attendee: meeting_attendee,
+      cpsMeeting_Id: meetingId,
+      cpsCategory_Id: meeting_item.category_id
     }
 
-    handleCreateMeetingItemWithAttendees(meeting_item_action_attendee);
+    if (!isEdit) {
+      handleMeetingItemWithAttendeesAction(meeting_item_action_attendee, 'create');
+    } else {
+      handleMeetingItemWithAttendeesAction(meeting_item_action_attendee, 'update');
+    }
     onClose();
   };
 
+  const getDate = (inputString) => {
+    const dateRegex = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})$/;
+    if (!dateRegex.test(inputString)) {
+      return "Invalid Date Format";
+    }
+
+    // Parse the input string into a Date object
+    const [year, month, day] = inputString.split('T')[0].split('-');
+    const formattedDate = new Date(`${month}/${day}/${year}`);
+
+    // Check if the Date object is valid
+    if (!(formattedDate instanceof Date) || isNaN(formattedDate)) {
+      return "Invalid Date";
+    }
+
+    const formattedMonth = String(formattedDate.getMonth() + 1).padStart(2, '0');
+    const formattedDay = String(formattedDate.getDate()).padStart(2, '0');
+    const formattedYear = String(formattedDate.getFullYear());
+
+    return `${formattedMonth}/${formattedDay}/${formattedYear}`;
+  };
+
+  const getMeetingItemActionForMeeting = (isGetDate) => {
+    const { actionItems } = selectedMeetingItem || {};
+
+    if (!actionItems || actionItems.length === 0) return null;
+    const action = actionItems.find(action => {
+      return action.meeting_id == meetingId
+    })
+    if (!action) return null;
+    return isGetDate ? action.action_date : action.action_taken;
+  }
+
+  const getOwner = () => {
+    // match the owner to a meeting attendee by the attendee id
+    const { attendee_id } = selectedMeetingItem || {};
+    if (!attendee_id) return null;
+    const owner = meetingAttendeesFirstName.find(attendee => {
+      return attendee.id == attendee_id
+    })
+    return owner ? owner : null;
+  }
+
   return (
     <SideSheet
-      title="Add Meeting Item"
+      title={isEdit ? "Edit Meeting Item" : "Add Meeting Item"}
       open={open}
       onClose={onClose}
       width={'600px'}
     >
       <Form ref={formRef} onSubmit={handleSubmit}>
-        <Stack spacing={1}>
-          <Stack direction="row" spacing={1}>
+        {isEdit && (
+          <Box>
             <Chip
-              label={`Created By: ${createdBy}`}
+              label={`Created By: ${selectedMeetingItem?.created_by}`}
               size="small"
               color="primary"
-              style={{ display: (createdBy == 'N/A') ? 'none' : 'block' }}
+              style={{ display: selectedMeetingItem?.created_by === null || selectedMeetingItem?.created_by === "" ? 'none' : 'inline-block' }}
+              variant="outlined"
             />
             <Chip
-              label={`Created On: ${createdOn}`}
+              label={`Created On: ${getDate(selectedMeetingItem?.created_on)}`}
               size="small"
               color="primary"
-              style={{ display: (createdOn == 'N/A') ? 'none' : 'block' }}
-            />
-          </Stack>
-          <Stack direction="row" spacing={1}>
-            <Chip
-              label={`Updated By: r${updatedBy}`}
-              size="small"
-              color="secondary"
-              style={{ display: (updatedBy == 'N/A') ? 'none' : 'block' }}
+              style={{ display: !selectedMeetingItem?.created_on ? 'none' : 'inline-block' }}
+              variant="outlined"
             />
             <Chip
-              label={`Updated On: ${updatedOn}`}
+              label={`Updated By: ${selectedMeetingItem?.created_by}`}
               size="small"
-              color="secondary"
-              style={{ display: (updatedOn == 'N/A') ? 'none' : 'block' }}
+              color="primary"
+              style={{ display: selectedMeetingItem?.created_by === null || selectedMeetingItem?.created_by === "" ? 'none' : 'inline-block' }}
+              variant="outlined"
             />
-          </Stack>
-        </Stack>
-        <Field
-          component={FluentTextFieldAutoComplete}
-          label="Category"
-          id="Category"
-          name="category"
-          fullWidth
-          variant="outlined"
-          required
-          options={['Category 1', 'Category 2', 'Category 3']}
-          style={{ marginTop: '1.25rem', marginBottom: '1rem' }}
+            <Chip
+              label={`Updated On: ${getDate(selectedMeetingItem?.created_on)}`}
+              size="small"
+              color="primary"
+              style={{ display: !selectedMeetingItem?.updated_on ? 'none' : 'inline-block' }}
+              variant="outlined"
+            />
+          </Box>
+        )}
+
+        <CategoryManager
+          categories={categories}
+          selectedMeetingItem={selectedMeetingItem}
+          refetchCategories={refetchCategories}
+          handleCategoryCreate={handleCategoryCreate}
         />
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'center' }}>
-          <FluentButton
-            variant="outlined"
-            color="primary"
-            style={{ width: '220px' }}
-          >
-            Create A New Category
-          </FluentButton>
-          <FluentButton
-            variant="outlined"
-            color="primary"
-            style={{ width: '220px' }}
-          >
-            Manage Existing Categories
-          </FluentButton>
-        </Box>
         <Box>
         </Box>
         <Box sx={{ display: 'flex', direction: 'column', gap: '1rem' }}>
@@ -196,6 +294,8 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
             id="Action Date"
             name="action_date"
             variant="outlined"
+            initialValue={meetingDate}
+            required
           />
           <Field
             component={FluentDatePicker}
@@ -203,6 +303,8 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
             id="Due Date"
             name="due_date"
             variant="outlined"
+            // initialValue={selectedMeetingItem?.dueDate ? selectedMeetingItem.dueDate : null}
+            initialValue={formatDate(selectedMeetingItem?.due_date)}
           />
         </Box>
         <Box sx={{ display: 'flex', direction: 'column', gap: '1rem', justifyContent: 'center' }}>
@@ -214,6 +316,7 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
             margin="normal"
             options={['Open', 'Closed', 'Info']}
             style={{ width: '275px' }}
+            initialValue={selectedMeetingItem?.status ? selectedMeetingItem.status : null}
           />
           <Field
             component={FluentTextFieldAutoComplete}
@@ -222,6 +325,7 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
             name="priority"
             options={['None', 'Low', 'Medium', 'High', 'Critical']}
             style={{ width: '275px' }}
+            initialValue={selectedMeetingItem?.priority ? selectedMeetingItem.priority : null}
           />
         </Box>
         <Field
@@ -231,6 +335,8 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
           name="subject"
           variant="outlined"
           size="small"
+          required
+          initialValue={selectedMeetingItem?.subject ? selectedMeetingItem.subject : null}
         />
         <Field
           component={TextField}
@@ -242,14 +348,16 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
           name="description"
           variant="outlined"
           required
+          initialValue={selectedMeetingItem?.description ? selectedMeetingItem.description : null}
         />
         <Field
           component={FluentTextFieldAutoComplete}
           label="Owner"
           id="Owner"
           name="owner"
-          options={users}
+          options={meetingAttendeesFirstName}
           optionKey="name"
+          initialValue={getOwner()}
         />
         <Field
           component={TextField}
@@ -260,17 +368,18 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
           id="Action Taken"
           name="action_taken"
           variant="outlined"
+          initialValue={getMeetingItemActionForMeeting(false)}
         />
         <FormButtons>
           <SubmitButton
             variant="contained"
             color="primary"
           >
-            Add Meeting Item
+            {isEdit ? "Update Meeting Item" : "Add Meeting item"}
           </SubmitButton>
         </FormButtons>
       </Form>
-    </SideSheet>
+    </SideSheet >
   );
 };
 

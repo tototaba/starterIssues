@@ -32,7 +32,6 @@ const ModalAlert = props => {
   };
 
   const confirmationStringUpdated = confirmationString ?? 'DELETE';
-
   return (
     <div>
       <Dialog
@@ -43,8 +42,8 @@ const ModalAlert = props => {
       >
         <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
         <DialogContent>
-          {Table && 
-          <Table {...tableProps}/>}
+          {Table &&
+            <Table {...tableProps} />}
           <DialogContentText id="alert-dialog-description">
             {message}
           </DialogContentText>
@@ -70,7 +69,7 @@ const ModalAlert = props => {
             {disagree}
           </Button>
           <Button
-            onClick={action}
+            onClick={() => action()}
             onMouseUp={closeAlert}
             color="primary"
             autoFocus

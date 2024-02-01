@@ -20,7 +20,7 @@ const CorrespondenceTab = (props) => {
   };
 
   const [{ data: correspondence }, refetchCorrespondence] = useAxiosGet(
-    process.env.REACT_APP_PRODUCTIVITY_API_BASE,
+    process.env.REACT_APP_MEETING_MINUTES_API_BASE,
     `cpsmeeting_attachment/meeting/${meeting?.id ?? ''}`,
     {},
     !!!meeting
@@ -49,6 +49,7 @@ const CorrespondenceTab = (props) => {
             correspondence={correspondence}
             refetchCorrespondence={refetchCorrespondence}
             type='Review'
+            isDraft={true}
           />
         </FluentTabPanel>
         <FluentTabPanel value={tabValue} index={1}>
@@ -58,6 +59,7 @@ const CorrespondenceTab = (props) => {
             correspondence={correspondence}
             refetchCorrespondence={refetchCorrespondence}
             type='Minutes'
+            isDraft={false}
           />
         </FluentTabPanel>
 

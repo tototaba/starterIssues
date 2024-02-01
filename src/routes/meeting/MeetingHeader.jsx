@@ -12,15 +12,25 @@ const MeetingHeader = (props) => {
     crumbData,
     fetchMeeting,
     newBusiness,
+    meetingSeries,
+    refetchSeries,
+    hasMeetingItems,
   } = props;
 
   return (
     <Box sx={{ padding: "0 1em" }}>
       <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
         <BreadcrumbTrail items={crumbData} />
-        <MeetingControls meeting={meeting} fetchMeeting={fetchMeeting} newBusiness={newBusiness} />
+        <MeetingControls
+          meeting={meeting}
+          fetchMeeting={fetchMeeting}
+          newBusiness={newBusiness}
+          meetingSeries={meetingSeries}
+          refetchSeries={refetchSeries}
+          hasMeetingItems={hasMeetingItems}
+        />
       </Box>
-      <ChipHeader items={chipData} />
+      <ChipHeader variant="outlined" items={chipData} />
     </Box>
   );
 

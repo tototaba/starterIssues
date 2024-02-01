@@ -10,7 +10,6 @@ const AttendeesGrid = props => {
     attendeesMetaData,
   } = props;
 
-  const [check, setCheck] = useState(false);
 
   const updateMetaData = useCallback((id, option, value) => {
     setAttendeesMetaData(prevState => ({
@@ -20,7 +19,6 @@ const AttendeesGrid = props => {
         [option]: value,
       },
     }));
-    console.log(attendeesMetaData);
   }, [setAttendeesMetaData]);
 
   const gridOptions = {
@@ -37,23 +35,48 @@ const AttendeesGrid = props => {
       {
         headerName: 'Send Review',
         field: 'required',
+        width: '140px',
         cellRenderer: 'checkBoxRenderer',
         cellRendererParams: params => ({
-          defaultChecked: attendeesMetaData[params.data.id].send_review,
+          defaultChecked: attendeesMetaData[params.data.attendee_id].send_review,
           option: 'send_review',
-          id: params.data.id,
+          id: params.data.attendee_id,
           updateMetaData,
         }),
       },
       {
         headerName: 'Send Minutes',
-        field: 'attended',
+        field: 'sendminutes',
+        width: '140px',
         cellRenderer: 'checkBoxRenderer',
         cellRendererParams: params => ({
-          defaultChecked: attendeesMetaData[params.data.id].send_minutes,
-          // checked: check,
+          defaultChecked: attendeesMetaData[params.data.attendee_id].send_minutes,
           option: 'send_minutes',
-          id: params.data.id,
+          id: params.data.attendee_id,
+          updateMetaData,
+        }),
+      },
+      {
+        headerName: 'Attended',
+        field: 'attended',
+        width: '140px',
+        cellRenderer: 'checkBoxRenderer',
+        cellRendererParams: params => ({
+          defaultChecked: attendeesMetaData[params.data.attendee_id].attended,
+          option: 'attended',
+          id: params.data.attendee_id,
+          updateMetaData,
+        }),
+      },
+      {
+        headerName: 'Minutes Taker',
+        field: 'prepared_by',
+        width: '150px',
+        cellRenderer: 'checkBoxRenderer',
+        cellRendererParams: params => ({
+          defaultChecked: attendeesMetaData[params.data.attendee_id].prepared_by,
+          option: 'prepared_by',
+          id: params.data.attendee_id,
           updateMetaData,
         }),
       },

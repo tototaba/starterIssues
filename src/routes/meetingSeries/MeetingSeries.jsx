@@ -5,9 +5,9 @@ import {
   useUser,
   ActionsRenderer,
   PrimaryActionButton,
-  apiMutate,
   useAgGridApi,
   useAxiosGet,
+  useOutlook,
 } from 'unity-fluent-library';
 import {
   AssignIcon,
@@ -15,42 +15,51 @@ import {
   EditIcon,
   AddIcon,
 } from '@fluentui/react-icons';
-import { Typography } from '@material-ui/core';
+import { Typography, Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
+import CreateMeetingSideSheet from '../meeting/CreateMeetingSideSheet';
 
 const MeetingSeries = (props) => {
   const { params, ...other } = props;
   const [loading, setLoading] = useState(false);
-  const [numMeetings, setNumMeetings] = useState(0);
   const { gridApi, onGridReady } = useAgGridApi();
-  const [selectedRow, setSelectedRow] = useState();
+  const [open, setOpen] = useState(false);
   const history = useHistory();
   const user = useUser();
 
+  const getAccessToken = useOutlook(process.env.REACT_APP_MINUTES_URL + "/callback");
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const token = await getAccessToken();
+        console.log(token);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetch();
+  }, []);
+
   const [{ data: meetingSeries }, refetchMeetingSeries] = useAxiosGet(
-    process.env.REACT_APP_PRODUCTIVITY_API_BASE,
-    `cpsmeeting_group/tenant/${user?.currentTenantId}`,
+    process.env.REACT_APP_MEETING_MINUTES_API_BASE,
+    `cpsmeeting_group/tenant/${user?.currentTenantId}/DTO`,
     {},
     !!!user.currentTenantId
   );
 
-  const [{ data: meetings }, refetchMeetings] = useAxiosGet(
-    process.env.REACT_APP_PRODUCTIVITY_API_BASE,
-    `cpsmeeting`,
+  const [{ data: tenantUsers }, refetchTenantUsers] = useAxiosGet(
+    process.env.REACT_APP_SECURITY_API_BASE,
+    `users?tenantId=${user?.currentTenantId}&includeOnlyActiveTenants=true`,
     {},
+    !!!user?.id
   );
 
-  const countNumMeetings = () => {
-    meetingSeries.forEach((ms) => {
-      ms['meetings_in_series'] = 0;
-      meetings.forEach((m) => {
-        if (ms.id == m.group_id) {
-          ms['meetings_in_series'] = ms['meetings_in_series'] + 1;
-        }
-      })
-    });
-    console.log(meetingSeries);
-  }
+  const handleOnClose = () => {
+    refetchMeetingSeries();
+    setOpen(false);
+  };
+
 
   const actionList = useMemo(
     () => [
@@ -89,21 +98,20 @@ const MeetingSeries = (props) => {
       sortable: true,
     },
     columnDefs: [
-      { headerName: 'Meeting Series id', field: 'id', },
+      // { headerName: 'Meeting Series id', field: 'id', },
       { headerName: 'Title', field: 'name', },
-      { headerName: 'Meetings in Series', field: 'meetings_in_series', },
-      { headerName: 'Date', field: 'date', },
-      { headerName: 'Open Items', field: 'open_items', },
-      { headerName: 'Draft Sent', field: 'draft_sent', },
-      { headerName: 'Final Sent', field: 'final_sent', },
-      {
-        headerName: 'Actions',
-        cellRenderer: 'actionsRenderer',
-        cellRendererParams: {
-          actionList
-        },
-        suppressMenu: true,
-      }
+      { headerName: 'Meetings in Series', field: 'meeting_count', },
+      { headerName: 'Open Items', field: 'item_count', },
+      // { headerName: 'Draft Sent', field: 'draft_sent', },
+      // { headerName: 'Final Sent', field: 'final_sent', },
+      // {
+      //   headerName: 'Actions',
+      //   cellRenderer: 'actionsRenderer',
+      //   cellRendererParams: {
+      //     actionList
+      //   },
+      //   suppressMenu: true,
+      // }
     ],
   };
 
@@ -118,27 +126,35 @@ const MeetingSeries = (props) => {
   );
 
   const addMeetingSeriesButton = (
-    <PrimaryActionButton>
-      <Typography>Add</Typography>
+    <PrimaryActionButton onClick={() => setOpen(true)}>
+      <Typography>New Meeting Series</Typography>
       <AddIcon />
     </PrimaryActionButton>
   );
 
   return (
-    <AmbientGridTemplate
-      title='Meeting Series'
-      primaryActionButton={addMeetingSeriesButton}
-      gridOptions={gridOptions}
-      onRowSelected={handleRowSelected}
-      onRowClicked={handleRowSelected}
-      rowSelection="single"
-      data={meetingSeries}
-      loading={loading}
-      api={gridApi}
-      hideGroupTab
-      hideColumnTab
-      frameworkComponents={{ actionsRenderer: ActionsRenderer }}
-    />
+    <>
+      <AmbientGridTemplate
+        title='Meeting Series'
+        primaryActionButton={addMeetingSeriesButton}
+        gridOptions={gridOptions}
+        onRowSelected={handleRowSelected}
+        onRowClicked={handleRowSelected}
+        rowSelection="single"
+        data={meetingSeries}
+        loading={loading}
+        api={gridApi}
+        height="calc(100vh - 112px)"
+        hideGroupTab
+        hideColumnTab
+        frameworkComponents={{ actionsRenderer: ActionsRenderer }}
+      />
+      <CreateMeetingSideSheet
+        open={open}
+        onClose={handleOnClose}
+        tenantUsers={tenantUsers}
+      />
+    </>
   );
 };
 

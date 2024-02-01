@@ -35,6 +35,8 @@ const ConstructionUnits = lazy(() =>
 const MeetingSeries = lazy(() => import('./routes/meetingSeries/MeetingSeries'));
 const Meetings = lazy(() => import('./routes/meetings/Meetings'));
 const Meeting = lazy(() => import('./routes/meeting/Meeting'));
+const OutlookCallbackPage = lazy(() => import('./routes/meetingSeries/OutlookCallbackPage'));
+const DashBoard = lazy(() => import('./routes/dashboard/DashBoard'));
 const Employee = lazy(() => import('./routes/config/employee/Employee'));
 const Contractor = lazy(() => import('./routes/config/contractor/Contractor'));
 const ContractorView = lazy(() =>
@@ -213,10 +215,28 @@ const Routes = () => {
                   <PrivateRoute
                     path="/meetings/:meetingSeriesId"
                     exact component={Meetings} />
+                  <PrivateRoute
+                    path="/callback"
+                    exact component={OutlookCallbackPage} />
 
-                  <PrivateRoute 
+                  <PrivateRoute
+                    path="/meetings"
+                    exact component={MeetingSeries} />
+
+                  <PrivateRoute
+                    path="/meetings/:meetingSeriesId/meeting/"
+                    exact component={Meetings} />
+
+                  <PrivateRoute
                     path="/meetings/:meetingSeriesId/meeting/:meetingId"
-                    exact component={Meeting} />
+                    render={(props) => (
+                      <Meeting key={props.location.pathname} {...props} />
+                    )}
+                  />
+                  
+                  <PrivateRoute
+                    path="/dashboard"
+                    exact component={DashBoard} />
 
                   <PrivateRoute path="/test" exact component={TestShell} />
 
@@ -227,7 +247,7 @@ const Routes = () => {
                     path="/inquiry/:id"
                     render={props => <Inquiry {...props} />}
                   />
-                  
+
                   <PrivateRoute
                     path="/projects"
                     exact
