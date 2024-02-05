@@ -357,7 +357,7 @@ const CreateMeetingSideSheet = (props) => {
         setIsSecondFormValid(false);
         return 'Title is required';
       }
-
+   
       return undefined; // No validation error
     },
     users: (value) => {
@@ -579,7 +579,7 @@ const CreateMeetingSideSheet = (props) => {
               <FluentButton variant="outlined" color="primary" onClick={handleBack}>Back</FluentButton>
             )}
             {activeStep !== steps.length - 1 && (
-              <FluentButton variant="outlined" color="primary" onClick={handleNext} disabled={(!isFirstFormValid && activeStep === 0) || !isSecondFormValid && activeStep === 1}>Next</FluentButton>
+              <FluentButton variant="outlined" color="primary" onClick={handleNext} disabled={(!isFirstFormValid && activeStep === 0) || !isSecondFormValid && activeStep ===1 }>Next</FluentButton>
             )}
             {activeStep === steps.length - 1 && (
               <FluentButton variant="outlined" color="primary" type="submit">Submit</FluentButton>
