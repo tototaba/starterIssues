@@ -1,9 +1,0 @@
-{
-  "editor.insertSpaces": true,
-  "editor.tabSize": 2,
-  "debug.node.autoAttach": "on",
-  "editor.formatOnSave": true,
-  "i18n-ally.localesPaths": "public/locales",
-  "i18n-ally.keystyle": "nested",
-  "typescript.tsserver.experimental.enableProjectDiagnostics": true,
-}
