@@ -1,15 +1,10 @@
 # Introduction
-
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project.
+Meeting Minutes Frontend
 
 # Getting Started
-
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-
-1. Installation process
-2. Software dependencies
-3. Latest releases
-4. API references
+1. Clone Repo
+2. Yarn Install
+3. Yarn start
 
 # Build and Test
 
