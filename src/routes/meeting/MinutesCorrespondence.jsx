@@ -307,6 +307,8 @@ const MinutesCorrespondence = (props) => {
           </FluentButton> */}
           <Stack display='flex' direction='row' marginLeft='auto' gap='15px'>
             <FluentButton
+              id='udpRecord-MinutesCorrespondence-save'
+              udpRecordId='udpRecord-MinutesCorrespondence-save'
               name='action'
               value='save'
               variant='outlined'
@@ -318,6 +320,8 @@ const MinutesCorrespondence = (props) => {
               <SaveIcon />
             </FluentButton>
             <FluentButton
+              id='udpRecord-MinutesCorrespondence-downloadPDF'
+              udpRecordId='udpRecord-MinutesCorrespondence-downloadPDF'
               name='action'
               value='download'
               variant='outlined'
@@ -329,6 +333,8 @@ const MinutesCorrespondence = (props) => {
               <DownloadIcon />
             </FluentButton>
             <FluentButton
+              id='udpRecord-MinutesCorrespondence-sendEmail'
+              udpRecordId='udpRecord-MinutesCorrespondence-sendEmail'
               name='action'
               value='send'
               variant='outlined'

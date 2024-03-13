@@ -1,24 +1,16 @@
-import React, { Suspense } from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import PageLoading from '../src/UI/routing/PageLoading';
 import './i18n';
+import { LicenseManager } from '@ag-grid-enterprise/core';
+import { LicenseKey } from 'unity-fluent-library';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <Suspense
-      fallback={
-        <div>
-          <PageLoading />
-        </div>
-      }
-    >
-      <App />
-    </Suspense>
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+LicenseManager.setLicenseKey(LicenseKey);
+
+const container = document.getElementById('root');
+const root = createRoot(container); // createRoot(container!) if you use TypeScript
+root.render(<App />);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

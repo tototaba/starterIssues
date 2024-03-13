@@ -14,7 +14,14 @@ import {
   FluentButton,
   AmbientAlert
 } from 'unity-fluent-library';
-import { Switch, Typography } from '@material-ui/core';
+import { Switch, Typography, makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles({
+  smallerTextField: {
+    width: '225px', // Adjust the width as needed
+  },
+});
+
 const EditMeetingSideSheet = (props) => {
   const {
     initialMeeting,
@@ -27,6 +34,7 @@ const EditMeetingSideSheet = (props) => {
   const { handleErrorSnackbar, handleSuccessSnackbar } = useHandleAxiosSnackbar();
   const { getAccessToken, invalidateUserSession, login, isUserSignedIn } = useOutlook(process.env.REACT_APP_MINUTES_URL + "/callback");
   const [updateInOutlook, setUpdateInOutlook] = useState(isUserSignedIn() && meeting?.outlookEventId);
+  const classes = useStyles();
 
   useEffect(() => {
     setMeeting(initialMeeting);
@@ -45,17 +53,18 @@ const EditMeetingSideSheet = (props) => {
   }, [setOutlookAccessToken]);
 
   function parseTime(timeString) {
-    const currentDate = new Date();
-    const [time, modifier] = timeString.split(' ');
-    let [hours, minutes] = time.split(':');
-    if (hours === '12') {
-      hours = '00';
+    //12hr to 24hr
+   const [time, period] = timeString.split(' ');
+    const [hour, minute] = time.split(':');
+    // Convert hour to 24-hour format
+    let hour24;
+    if (period === 'AM') {
+        hour24 = hour === '12' ? '00' : hour.padStart(2, '0');
+    } else {
+        hour24 = hour === '12' ? '12' : String(Number(hour) + 12);
     }
-    if (modifier === 'PM') {
-      hours = parseInt(hours, 10) + 12;
-    }
-    currentDate.setHours(hours, minutes);
-    return currentDate;
+    // Return the time in 24-hour format
+    return hour24 + ':' + minute;
   }
 
   const updateMeeting = useCallback(
@@ -117,8 +126,20 @@ const EditMeetingSideSheet = (props) => {
         minute: '2-digit',
         hour12: true,
       };
-      let startTime = values.start_time.toLocaleTimeString(undefined, options);
-      let endTime = values.end_time.toLocaleTimeString(undefined, options);
+      
+      //24hr to 12hr
+      const startTimeString = values.start_time;
+      const [startHours, StartMinutes] = startTimeString.split(":");
+      const startToday = new Date();
+      const fullStartTime = new Date(startToday.getFullYear(), startToday.getMonth(), startToday.getDate(), startHours, StartMinutes);
+      const StartTimeStringFormated = fullStartTime.toLocaleTimeString(undefined, options);
+
+      const endTimeString = values.end_time;
+      const [endHours, endMinutes] = endTimeString.split(":");
+      const endToday = new Date();
+      const fullendTime = new Date(endToday.getFullYear(), endToday.getMonth(), endToday.getDate(), endHours, endMinutes);
+      const endTimeStringFormated = fullendTime.toLocaleTimeString(undefined, options);
+  
       const updatedMeeting = {
         Date: values.date,
         Group_id: meeting.group_id,
@@ -126,8 +147,8 @@ const EditMeetingSideSheet = (props) => {
         Location: values.location,
         Meeting_number: values.meeting_number,
         Next_meeting_id: meeting.next_meeting_id,
-        Start_time: startTime,
-        End_time: endTime,
+        Start_time: StartTimeStringFormated,
+        End_time: endTimeStringFormated,
         Status: meeting.status,
         Title: values.title,
         Meeting_number: values.meeting_number,
@@ -201,6 +222,7 @@ const EditMeetingSideSheet = (props) => {
             variant='outlined'
             size='small'
             initialValue={meeting ? meeting.title : ''}
+            udpRecordId={'udpRecord-EditMeetingSideSheet-Title'}
           />
           <Field
             component={TextField}
@@ -210,6 +232,7 @@ const EditMeetingSideSheet = (props) => {
             variant='outlined'
             size='small'
             initialValue={meeting ? meeting.meeting_number : ''}
+            udpRecordId={'udpRecord-EditMeetingSideSheet-meeting_Number'}
           />
         </Box>
         <Field
@@ -220,6 +243,7 @@ const EditMeetingSideSheet = (props) => {
           variant='outlined'
           size='small'
           initialValue={meeting ? meeting.location : ''}
+          udpRecordId={'udpRecord-EditMeetingSideSheet-Location'}
         />
         <Box display='flex' direction='row' sx={{ gap: '1rem' }}>
           <Field
@@ -229,22 +253,35 @@ const EditMeetingSideSheet = (props) => {
             name='date'
             variant='outlined'
             initialValue={meeting ? meeting.date : ''}
+            udpRecordId={'udpRecord-EditMeetingSideSheet-Date'}
           />
           <Field
-            component={FluentTimePicker}
+            type='time'
+            component={TextField}
             label='Start Time'
             id='Start Time'
             name='start_time'
             variant='outlined'
             initialValue={meeting ? parseTime(meeting.start_time) : ''}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            className={classes.smallerTextField}
+            udpRecordId={'udpRecord-EditMeetingSideSheet-Start_Time'}
           />
           <Field
-            component={FluentTimePicker}
+            type='time'
+            component={TextField}
             label='End Time'
             id='End Time'
             name='end_time'
             variant='outlined'
             initialValue={meeting ? parseTime(meeting.end_time) : ''}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            className={classes.smallerTextField}
+            udpRecordId={'udpRecord-EditMeetingSideSheet-End_Time'}
           />
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', margin: '1rem' }}>
@@ -276,6 +313,8 @@ const EditMeetingSideSheet = (props) => {
             variant='contained'
             color='primary'
             type='submit'
+            id={'udpRecord-EditMeetingSideSheet-Update'}
+            udpRecordId={'udpRecord-EditMeetingSideSheet-Update'}
           >
             Update
           </FluentButton>

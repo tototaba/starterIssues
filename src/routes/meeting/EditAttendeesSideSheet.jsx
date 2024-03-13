@@ -20,7 +20,8 @@ const EditAttendeesSideSheet = ({
   meetingAttendeeMeeting,
   refetchMeetingAttendees,
   refetchMeetingAttendeeMeetings,
-  meetingSeriesId
+  meetingSeriesId,
+  refetchMeeting
 }) => {
   const formRef = useRef(null);
   const [attendeesMetaData, setAttendeesMetaData] = useState();
@@ -229,6 +230,7 @@ const EditAttendeesSideSheet = ({
 
       refetchMeetingAttendees();
       refetchMeetingAttendeeMeetings();
+      refetchMeeting();
       handleSuccessSnackbar("Attendees updated successfully")
       onClose();
     } catch (error) {
@@ -262,6 +264,8 @@ const EditAttendeesSideSheet = ({
       onClose={handleClose}
       open={open}
       width={"800px"}
+      id={"udpRecord-EditAttendeesSideSheet-submit"}
+      udpRecordId={"udpRecord-EditAttendeesSideSheet-submit"}
     >
       <Form onSubmit={handleSubmit} ref={formRef}>
         <Field

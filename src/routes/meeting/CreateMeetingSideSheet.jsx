@@ -167,8 +167,19 @@ const CreateMeetingSideSheet = (props) => {
       hour12: true,
     };
 
-    let startTime = values.startTime.toLocaleTimeString(undefined, options);
-    let endTime = values.endTime.toLocaleTimeString(undefined, options);
+    //24hr to 12hr
+    const startTimeString = values.startTime;
+    const [startHours, StartMinutes] = startTimeString.split(":");
+    const startToday = new Date();
+    const fullStartTime = new Date(startToday.getFullYear(), startToday.getMonth(), startToday.getDate(), startHours, StartMinutes);
+    const StartTimeStringFormated = fullStartTime.toLocaleTimeString(undefined, options);
+
+    const endTimeString = values.endTime;
+    const [endHours, endMinutes] = endTimeString.split(":");
+    const endToday = new Date();
+    const fullendTime = new Date(endToday.getFullYear(), endToday.getMonth(), endToday.getDate(), endHours, endMinutes);
+    const endTimeStringFormated = fullendTime.toLocaleTimeString(undefined, options);
+
     const meeting = {
       Group_id: values.MeetingSeries.id,
       Meeting_number: values.MeetingNumber,
@@ -176,8 +187,8 @@ const CreateMeetingSideSheet = (props) => {
       Status: "Active",
       Location: values.Location,
       Date: values.date,
-      Start_time: startTime,
-      End_time: endTime,
+      Start_time: StartTimeStringFormated,
+      End_time: endTimeStringFormated,
     }
 
     let meetingAgendaCategories;
@@ -481,7 +492,8 @@ const CreateMeetingSideSheet = (props) => {
 
         <Field
           label={"Start Time"}
-          component={FluentTimePicker}
+          type='time'
+          component={TextField}
           id="startTime"
           name="startTime"
           fullWidth
@@ -489,11 +501,15 @@ const CreateMeetingSideSheet = (props) => {
           margin="normal"
           size="small"
           required
+          InputLabelProps={{
+            shrink: true,
+          }}
         // initialValue={}
         />
         <Field
           label={"End Time"}
-          component={FluentTimePicker}
+          type='time'
+          component={TextField}
           id="endTime"
           name="endTime"
           fullWidth
@@ -501,6 +517,9 @@ const CreateMeetingSideSheet = (props) => {
           margin="normal"
           size="small"
           required
+          InputLabelProps={{
+            shrink: true,
+          }}
         // initialValue={}
         />
       </Box >

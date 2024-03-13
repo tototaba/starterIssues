@@ -35,6 +35,10 @@ const Meetings = (props) => {
     {},
   );
 
+  useEffect(() => {
+    refetchMeetingSeries();
+  }, []);
+
   const [{ data: tenantUsers }, refetchTenantUsers] = useAxiosGet(
     process.env.REACT_APP_SECURITY_API_BASE,
     `users?tenantId=${user?.currentTenantId}&includeOnlyActiveTenants=true`,

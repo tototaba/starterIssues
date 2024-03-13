@@ -31,6 +31,7 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
   const [CreateCategoryOpen, setCreateCategoryOpen] = useState(false);
   const [ManageCategoriesOpen, setManageCategoriesOpen] = useState(false);
   const { handleErrorSnackbar, handleSuccessSnackbar } = useHandleAxiosSnackbar();
+  const [submitReady, setSubmitReady] = useState(false);
 
   const searchData = useMemo(() => ({
     data: {
@@ -246,69 +247,17 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
       width={'600px'}
     >
       <Form ref={formRef} onSubmit={handleSubmit}>
-        {isEdit && (
-          <Box>
-            <Chip
-              label={`Created By: ${selectedMeetingItem?.created_by}`}
-              size="small"
+        <FormButtons style={{ position: 'absolute', top: 0, right: 0}}>
+            <SubmitButton
+              variant="contained"
               color="primary"
-              style={{ display: selectedMeetingItem?.created_by === null || selectedMeetingItem?.created_by === "" ? 'none' : 'inline-block' }}
-              variant="outlined"
-            />
-            <Chip
-              label={`Created On: ${getDate(selectedMeetingItem?.created_on)}`}
-              size="small"
-              color="primary"
-              style={{ display: !selectedMeetingItem?.created_on ? 'none' : 'inline-block' }}
-              variant="outlined"
-            />
-            <Chip
-              label={`Updated By: ${selectedMeetingItem?.created_by}`}
-              size="small"
-              color="primary"
-              style={{ display: selectedMeetingItem?.created_by === null || selectedMeetingItem?.created_by === "" ? 'none' : 'inline-block' }}
-              variant="outlined"
-            />
-            <Chip
-              label={`Updated On: ${getDate(selectedMeetingItem?.created_on)}`}
-              size="small"
-              color="primary"
-              style={{ display: !selectedMeetingItem?.updated_on ? 'none' : 'inline-block' }}
-              variant="outlined"
-            />
-          </Box>
-        )}
+              style={{ fontSize: '30px', padding: '10px 20px' }}
+            >
+              {isEdit ? "Update" : "Add"}
+            </SubmitButton>
+          </FormButtons>
 
-        <CategoryManager
-          categories={categories}
-          selectedMeetingItem={selectedMeetingItem}
-          refetchCategories={refetchCategories}
-          handleCategoryCreate={handleCategoryCreate}
-        />
-        <Box>
-        </Box>
-        <Box sx={{ display: 'flex', direction: 'column', gap: '1rem' }}>
-          <Field
-            component={FluentDatePicker}
-            label="Action Date"
-            id="Action Date"
-            name="action_date"
-            variant="outlined"
-            initialValue={meetingDate}
-            required
-          />
-          <Field
-            component={FluentDatePicker}
-            label="Due Date"
-            id="Due Date"
-            name="due_date"
-            variant="outlined"
-            // initialValue={selectedMeetingItem?.dueDate ? selectedMeetingItem.dueDate : null}
-            initialValue={formatDate(selectedMeetingItem?.due_date)}
-          />
-        </Box>
-        <Box sx={{ display: 'flex', direction: 'column', gap: '1rem', justifyContent: 'center' }}>
-          <Field
+        <Field
             component={FluentTextFieldAutoComplete}
             label="Status"
             id="Status"
@@ -318,16 +267,6 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
             style={{ width: '275px' }}
             initialValue={selectedMeetingItem?.status ? selectedMeetingItem.status : null}
           />
-          <Field
-            component={FluentTextFieldAutoComplete}
-            label="Priority"
-            id="Priority"
-            name="priority"
-            options={['None', 'Low', 'Medium', 'High', 'Critical']}
-            style={{ width: '275px' }}
-            initialValue={selectedMeetingItem?.priority ? selectedMeetingItem.priority : null}
-          />
-        </Box>
         <Field
           component={TextField}
           label="Subject"
@@ -337,7 +276,7 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
           size="small"
           required
           initialValue={selectedMeetingItem?.subject ? selectedMeetingItem.subject : null}
-        />
+          />
         <Field
           component={TextField}
           minRows={3}
@@ -350,6 +289,35 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
           required
           initialValue={selectedMeetingItem?.description ? selectedMeetingItem.description : null}
         />
+
+        <CategoryManager
+          categories={categories}
+          selectedMeetingItem={selectedMeetingItem}
+          refetchCategories={refetchCategories}
+          handleCategoryCreate={handleCategoryCreate}
+        />
+
+        <Field
+            component={FluentDatePicker}
+            label="Due Date"
+            id="Due Date"
+            name="due_date"
+            variant="outlined"
+            // initialValue={selectedMeetingItem?.dueDate ? selectedMeetingItem.dueDate : null}
+            initialValue={formatDate(selectedMeetingItem?.due_date)}
+            style={{ width: '275px' }}
+          />
+
+        <Field
+            component={FluentTextFieldAutoComplete}
+            label="Priority"
+            id="Priority"
+            name="priority"
+            options={['None', 'Low', 'Medium', 'High', 'Critical']}
+            style={{ width: '275px' }}
+            initialValue={selectedMeetingItem?.priority ? selectedMeetingItem.priority : null}
+          />
+        
         <Field
           component={FluentTextFieldAutoComplete}
           label="Owner"
@@ -357,8 +325,32 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
           name="owner"
           options={meetingAttendeesFirstName}
           optionKey="name"
+          style={{ width: '275px' }}
           initialValue={getOwner()}
         />
+
+        <Box>
+          <h2 style={{ marginBottom: '0px' }}>Action</h2>
+          <Field
+              component={FluentDatePicker}
+              label="Action Date"
+              id="Action Date"
+              name="action_date"
+              variant="outlined"
+              initialValue={meetingDate}
+              required
+              style={{ width: '275px' }}
+            />
+        </Box>
+
+
+        <Box sx={{ display: 'flex', direction: 'column', gap: '1rem' }}>
+        </Box>
+        <Box sx={{ display: 'flex', direction: 'column', gap: '1rem', justifyContent: 'center' }}>
+        </Box>
+
+
+
         <Field
           component={TextField}
           minRows={3}
@@ -370,15 +362,21 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
           variant="outlined"
           initialValue={getMeetingItemActionForMeeting(false)}
         />
-        <FormButtons>
-          <SubmitButton
-            variant="contained"
-            color="primary"
-          >
-            {isEdit ? "Update Meeting Item" : "Add Meeting item"}
-          </SubmitButton>
-        </FormButtons>
+
       </Form>
+
+      <br/>
+      <br/>
+
+      {isEdit && (
+        <Box style={{ borderTop: '1px solid grey', paddingTop: '10px' }}>
+          <Box style={{ marginBottom: '10px' }}>{`Created On: ${getDate(selectedMeetingItem?.created_on)}`}</Box>
+          <Box style={{ marginBottom: '10px' }}>{`Created By: ${selectedMeetingItem?.created_by}`}</Box>
+          <Box style={{ marginBottom: '10px' }}>{`Updated On: ${getDate(selectedMeetingItem?.created_on)}`}</Box>
+          <Box style={{ marginBottom: '10px' }}>{`Updated By: ${selectedMeetingItem?.created_by}`}</Box>
+        </Box>
+      )}
+
     </SideSheet >
   );
 };

@@ -9,6 +9,7 @@ const AttendeesTab = ({
   seriesId,
   setAttendeesOpen,
   attendeesOpen,
+  refetchMeeting,
 }) => {
 
   const { handleErrorSnackbar, handleSuccessSnackbar } = useHandleAxiosSnackbar();
@@ -142,6 +143,7 @@ const AttendeesTab = ({
         refetchMeetingAttendeeMeetings={refetchMeetingAttendeeMeeting}
         refetchMeetingAttendees={fetchMeetingAttendees}
         meetingSeriesId={seriesId}
+        refetchMeeting={refetchMeeting}
       />
     </>
   );

@@ -8,6 +8,7 @@ import {
   apiMutate,
   useAxiosGet,
   useHandleAxiosSnackbar,
+  IconButtonWithTooltip,
 } from 'unity-fluent-library';
 import {
   EditIcon,
@@ -20,9 +21,10 @@ import {
   ClockIcon,
   CalendarAgendaIcon,
   MapPin12Icon,
-  LinkIcon
+  LinkIcon,
 } from '@fluentui/react-icons';
 import { Typography, Box } from '@material-ui/core';
+import { Add, Assignment, People, Edit, Delete } from '@mui/icons-material';
 import MeetingHeader from './MeetingHeader';
 import MinutesTab from './MinutesTab';
 import AttendeesTab from './AttendeesTab';
@@ -31,11 +33,15 @@ import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import { CreateCategory } from './Categories/categoriesHelpers';
 import { Link } from 'react-router-dom';
 import AgendaTab from './AgendaTab';
-const Meeting = (props) => {
+import { useTranslation } from 'react-i18next';
+
+const Meeting = props => {
   const { match, ...other } = props;
   const { params } = match;
   const [meetingId, setMeetingId] = useState(params?.meetingId || null);
-  const [meetingSeriesId, setMeetingSeriesId] = useState(params?.meetingSeriesId || null);
+  const [meetingSeriesId, setMeetingSeriesId] = useState(
+    params?.meetingSeriesId || null
+  );
   const [meetingAttendeeMeeting, setMeetingAttendeeMeeting] = useState([]);
   const [meetingAttendees, setMeetingAttendees] = useState([]);
   const [crumbData, setCrumbData] = useState([]);
@@ -43,67 +49,102 @@ const Meeting = (props) => {
   const [minutesOpen, setMinutesOpen] = useState(false);
   const [attendeesOpen, setAttendeesOpen] = useState(false);
   const [agendaSidesheetOpen, setAgendaSidesheetOpen] = useState(false);
-  const [agendaOrderSidesheetOpen, setAgendaOrderSidesheetOpen] = useState(false);
+  const [agendaOrderSidesheetOpen, setAgendaOrderSidesheetOpen] =
+    useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [selectedMeetingItem, setSelectedMeetingItem] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
   const [hasMeetingItems, setHasMeetingItems] = useState(false);
   const [meetingDate, setMeetingDate] = useState(null);
-
-  const { handleErrorSnackbar, handleSuccessSnackbar } = useHandleAxiosSnackbar();
+  const { t } = useTranslation();
+  const { handleErrorSnackbar, handleSuccessSnackbar } =
+    useHandleAxiosSnackbar();
+  var user = useUser();
 
   const tabList = [
     {
-      label: 'Minutes',
+      label: t('Minutes'),
       action: () => openMeetingItemSideSheet(),
-      buttonLabel: 'Add Meeting Item',
+      buttonLabel: t('Add Meeting Item'),
     },
     {
-      label: 'Attendees',
+      label: t('Attendees'),
       action: () => setAttendeesOpen(!attendeesOpen),
-      buttonLabel: 'Manage Attendees',
+      buttonLabel: t('Manage Attendees'),
     },
     {
-      label: 'Correspondence',
+      label: t('Correspondence'),
     },
     {
-      label: 'Agenda',
-      action: () => { setAgendaSidesheetOpen(true) },
-      buttonLabel: 'Update Agenda Order',
+      label: t('Agenda'),
+      action: () => {
+        setAgendaSidesheetOpen(true);
+      },
+      buttonLabel: t('Update Agenda Order'),
     },
   ];
 
+  const openMeetingItemSideSheet = () => {
+    setMinutesOpen(!minutesOpen);
+    setIsEdit(false);
+    setSelectedMeetingItem(null);
+  };
 
-  const [{ data: meeting }, refetchMeeting] = useAxiosGet(
-    process.env.REACT_APP_MEETING_MINUTES_API_BASE,
-    `cpsmeeting/${meetingId}/full`,
-    {},
-  );
+  const handlePrimaryAction = () => {
+    switch (tabValue) {
+      case 0: // Minutes
+        setMinutesOpen(!minutesOpen);
+        setIsEdit(false);
+        setSelectedMeetingItem(null);
+        break;
+      case 1: // Attendees
+        setAttendeesOpen(!attendeesOpen);
+        break;
+      case 2: // Correspondance
+        break;
+      case 3: // Agenda
+        setAgendaSidesheetOpen(true);
+        break;
+      default:
+      // Handle default case if necessary
+    }
+  };
 
-  const [{ data: series }, refetchSeries] = useAxiosGet(
-    process.env.REACT_APP_MEETING_MINUTES_API_BASE,
-    `cpsmeeting_group/${meeting?.group_id ?? ''}/full`,
-    {},
-    !!!meeting?.group_id
-  );
+  const [{ data: meeting, loading: fetchMeetingLoading }, refetchMeeting] =
+    useAxiosGet(
+      process.env.REACT_APP_MEETING_MINUTES_API_BASE,
+      `cpsmeeting/${meetingId}/full`,
+      {}
+    );
+
+  const [{ data: series, loading: fetchSeriesLoading }, refetchSeries] =
+    useAxiosGet(
+      process.env.REACT_APP_MEETING_MINUTES_API_BASE,
+      `cpsmeeting_group/${meeting?.group_id ?? ''}/full`,
+      {},
+      !!!meeting?.group_id
+    );
 
   const [{ data: categories }, refetchCategories] = useAxiosGet(
     process.env.REACT_APP_MEETING_MINUTES_API_BASE,
     `CpsCategory/${meetingSeriesId}/group`,
-    {},
+    {}
   );
 
-  const [{ data: meetingItems }, refetchMeetingItems] = useAxiosGet(
+  const [
+    { data: meetingItems, loading: fetchMeetingItemsLoading },
+    refetchMeetingItems,
+  ] = useAxiosGet(
     process.env.REACT_APP_MEETING_MINUTES_API_BASE,
     `cpsmeeting_item/oldNewBusiness/${meetingId}`,
-    {},
+    {}
   );
 
   useEffect(() => {
     if (!meeting || !meetingItems) {
       return;
     }
-    setHasMeetingItems(meetingItems[1].length > 0)
+    setHasMeetingItems(meetingItems[1].length > 0);
     const formattedDate = new Date(meeting.date).toLocaleDateString();
     setMeetingDate(formattedDate);
   }, [meeting, meetingItems]);
@@ -112,31 +153,39 @@ const Meeting = (props) => {
     setTabValue(newValue);
   };
 
-  const openMeetingItemSideSheet = () => {
-    setMinutesOpen(!minutesOpen);
-    setIsEdit(false);
-    setSelectedMeetingItem(null);
-  };
-
   const chipIcons = {
     location: <MapPin12Icon />,
     date: <CalendarAgendaIcon />,
     time: <ClockIcon />,
-    onlineMeeting: <LinkIcon />
-  }
+    onlineMeeting: <LinkIcon />,
+  };
 
-  const formatResponseData = (meeting) => {
+  const formatResponseData = meeting => {
     const crumbData = [meeting.cpsMeetingCpsMeeting_group?.name, meeting.title];
     const formattedDate = new Date(meeting.date).toLocaleDateString();
 
     const chipData = [
-      { text: `${String(meeting.meeting_number).padStart(3, '0')}`, icon: <p>#</p> },
+      {
+        text: `${String(meeting.meeting_number).padStart(3, '0')}`,
+        icon: <p>#</p>,
+      },
       { text: meeting.location, icon: chipIcons.location },
       { text: formattedDate, icon: chipIcons.date },
-      { text: `${meeting.start_time} - ${meeting.end_time}`, icon: chipIcons.time },
+      {
+        text: `${meeting.start_time} - ${meeting.end_time}`,
+        icon: chipIcons.time,
+      },
     ];
 
-    meeting.onlineMeetingUrl && chipData.push({ text: "Open in Outlook", href: meeting.onlineMeetingUrl, icon: chipIcons.onlineMeeting, component: "a", clickable: true, target: "_blank" })
+    meeting.onlineMeetingUrl &&
+      chipData.push({
+        text: t('Open in Outlook'),
+        href: meeting.onlineMeetingUrl,
+        icon: chipIcons.onlineMeeting,
+        component: 'a',
+        clickable: true,
+        target: '_blank',
+      });
 
     return { crumbData, chipData };
   };
@@ -154,17 +203,49 @@ const Meeting = (props) => {
     }
   }, [series, meeting]);
 
-  const handleCategoryCreate = useCallback(async (newCategory) => {
-    try {
-      const response = await CreateCategory(newCategory, meetingSeriesId);
+  const handleCategoryCreate = useCallback(
+    async newCategory => {
+      try {
+        const response = await CreateCategory(newCategory, meetingSeriesId);
 
-      handleSuccessSnackbar("Category created successfully");
-      refetchCategories();
-      return response.data;
-    } catch (error) {
-      handleErrorSnackbar(error, "Error creating category");
+        handleSuccessSnackbar(t('Category created successfully'));
+        refetchCategories();
+        return response.data;
+      } catch (error) {
+        handleErrorSnackbar(error, t('Error creating category'));
+      }
+    },
+    [meetingSeriesId]
+  );
+
+  const primaryActionButton = useMemo(() => {
+    switch (tabValue) {
+      case 0: // Minutes
+        return {
+          id: 'udpRecord-Meeting-primaryActionButtonMinutes',
+          udpRecordId: 'udpRecord-Meeting-primaryActionButtonMinutes',
+          icon: <Add/>,
+          title: 'Add Item',
+        };
+      case 1: // Attendees
+        return {
+          id: 'udpRecord-Meeting-primaryActionButtonAttendees',
+          udpRecordId: 'udpRecord-Meeting-primaryActionButtonAttendees',
+          icon: <People/>,
+          title: t('Manage Attendees'),
+        };
+      case 3: // Agenda
+        return {
+          id: 'udpRecord-Meeting-primaryActionButtonAgenda',
+          udpRecordId: 'udpRecord-Meeting-primaryActionButtonAgenda',
+          icon: <Assignment/>,
+          title: t('Update Agenda'),
+        };
+      default:
+        return null;
     }
-  }, [meetingSeriesId]);
+  }, [tabValue]);
+
   return (
     <Box>
       <SubHeaderAction>
@@ -176,15 +257,18 @@ const Meeting = (props) => {
           meetingSeries={series}
           refetchSeries={refetchSeries}
           hasMeetingItems={hasMeetingItems}
+          meetingItems={meetingItems}
+          primaryActionFunction={handlePrimaryAction}
+          primaryActionButton={primaryActionButton}
+          user={user}
         />
 
         <PrimaryActionHeader
-
+          hidePAB={true}
           tabList={tabList}
           handleChange={handleTabChange}
           value={tabValue}
           buttonLabel={tabList[tabValue].buttonLabel}
-          hidePAB={tabValue === 2}
           handleClick={tabList[tabValue].action}
           secondaryButtons={tabList[tabValue].secondaryButtons}
         />
@@ -207,9 +291,13 @@ const Meeting = (props) => {
           minutesOpen={minutesOpen}
           meetingItems={meetingItems}
           refetchMeetingItems={refetchMeetingItems}
+          fetchDataLoading={
+            fetchMeetingItemsLoading ||
+            fetchMeetingLoading ||
+            fetchSeriesLoading
+          }
           meetingDate={meetingDate}
         />
-
       </FluentTabPanel>
 
       <FluentTabPanel value={tabValue} index={1}>
@@ -219,16 +307,12 @@ const Meeting = (props) => {
           seriesId={meeting?.group_id}
           setAttendeesOpen={setAttendeesOpen}
           attendeesOpen={attendeesOpen}
+          refetchMeeting={refetchMeeting}
         />
-
-
       </FluentTabPanel>
 
       <FluentTabPanel value={tabValue} index={2}>
-        <CorrespondenceTab
-          meeting={meeting}
-          attendees={meetingAttendees}
-        />
+        <CorrespondenceTab meeting={meeting} attendees={meetingAttendees} />
       </FluentTabPanel>
       <FluentTabPanel value={tabValue} index={3}>
         <AgendaTab
@@ -242,8 +326,7 @@ const Meeting = (props) => {
           handleCategoryCreate={handleCategoryCreate}
         />
       </FluentTabPanel>
-
-    </Box >
+    </Box>
   );
 };
 

@@ -4,6 +4,7 @@ import {
     FluentTextFieldAutoComplete,
     FluentButton,
 } from 'unity-fluent-library';
+import { EditIcon } from '@fluentui/react-icons';
 import { Box } from '@mui/material';
 import CategorySideSheet from './CategorySideSheet';
 import ManageCategoriesSidesheet from './ManageCategoriesSidesheet';
@@ -12,32 +13,43 @@ const CategoryManager = ({
     categories,
     selectedMeetingItem,
     refetchCategories,
-    handleCategoryCreate
+    handleCategoryCreate,
 }) => {
-    const [CreateCategoryOpen, setCreateCategoryOpen] = useState(false);
     const [ManageCategoriesOpen, setManageCategoriesOpen] = useState(false);
 
     return (
         <>
-            <Field
-                component={FluentTextFieldAutoComplete}
-                label="Category"
-                id="Category"
-                name="category"
-                fullWidth
-                variant="outlined"
-                required
-                options={categories}
-                optionKey="title"
-                style={{ marginTop: '1.25rem', marginBottom: '1rem', display: 'block' }}
-                initialValue={
-                    selectedMeetingItem
-                        ? categories.find(
-                            (category) => category.id === selectedMeetingItem.category_id
-                        )
-                        : null
-                }
-            />
+            <Box style={{ display: 'flex', alignItems: 'center' }}>
+                <Field
+                    component={FluentTextFieldAutoComplete}
+                    label="Category"
+                    id="Category"
+                    name="category"
+                    fullWidth
+                    variant="outlined"
+                    required
+                    options={categories}
+                    optionKey="title"
+                    style={{ marginTop: '1.25rem', marginBottom: '1rem', display: 'block', width: '275px', marginRight: '10px' }}
+                    initialValue={
+                        selectedMeetingItem
+                            ? categories.find(
+                                (category) => category.id === selectedMeetingItem.category_id
+                            )
+                            : null
+                    }
+                    udpRecordId='udpRecord-CategoryManager-Category'
+                />
+
+                <FluentButton
+                    color="primary"
+                    onClick={() => setManageCategoriesOpen(true)}
+                >
+                    <EditIcon style={{ marginRight: '10px' }}></EditIcon>
+                    Manage Categories
+                </FluentButton>
+            </Box>
+
             <Box
                 sx={{
                     display: 'flex',
@@ -46,22 +58,6 @@ const CategoryManager = ({
                     alignItems: 'center',
                 }}
             >
-                <FluentButton
-                    variant="outlined"
-                    color="primary"
-                    style={{ width: '220px' }}
-                    onClick={() => setCreateCategoryOpen(true)}
-                >
-                    Create A New Category
-                </FluentButton>
-                <FluentButton
-                    variant="outlined"
-                    color="primary"
-                    style={{ width: '220px' }}
-                    onClick={() => setManageCategoriesOpen(true)}
-                >
-                    Manage Existing Categories
-                </FluentButton>
                 <ManageCategoriesSidesheet
                     categories={categories}
                     refetchCategories={refetchCategories}
@@ -69,14 +65,16 @@ const CategoryManager = ({
                     onClose={() => {
                         setManageCategoriesOpen(false);
                     }}
+                    handleCategoryCreate={handleCategoryCreate}
                 ></ManageCategoriesSidesheet>
-                <CategorySideSheet
+
+                {/* <CategorySideSheet
                     action={handleCategoryCreate}
                     open={CreateCategoryOpen}
                     onClose={() => {
                         setCreateCategoryOpen(false);
                     }}
-                ></CategorySideSheet>
+                ></CategorySideSheet> */}
             </Box>
         </>
     );

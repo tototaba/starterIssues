@@ -126,7 +126,11 @@ const MeetingSeries = (props) => {
   );
 
   const addMeetingSeriesButton = (
-    <PrimaryActionButton onClick={() => setOpen(true)}>
+    <PrimaryActionButton 
+      onClick={() => setOpen(true)} 
+      id='udpRecord-MeetingSeries-NewMeetingSeries' 
+      udpRecordId='udpRecord-MeetingSeries-NewMeetingSeries'
+    >
       <Typography>New Meeting Series</Typography>
       <AddIcon />
     </PrimaryActionButton>

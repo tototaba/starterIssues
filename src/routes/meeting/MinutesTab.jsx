@@ -1,12 +1,20 @@
 import { DeleteIcon, EditIcon } from '@fluentui/react-icons';
-import { Box, Accordion, Typography, makeStyles } from '@material-ui/core';
+import {
+  Box,
+  LinearProgress, //this will be import from the unity-fluent-library, when we have a wrapper
+} from '@material-ui/core';
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import { ActionsRenderer, AmbientGridTemplate, apiMutate, useAxiosGet, useUser } from 'unity-fluent-library';
+import {
+  ActionsRenderer,
+  AmbientGridTemplate,
+  apiMutate,
+} from 'unity-fluent-library';
 import AddMeetingItemSideSheet from './AddMeetingItemSideSheet';
 import MeetingItemsRenderer from './MeetingItems/MeetingItemsRenderer';
 import ModalAlert from '../../UI/ModalAlert';
+import { useTranslation } from 'react-i18next';
 
-const MinutesTab = (props) => {
+const MinutesTab = props => {
   const {
     meeting,
     setSideSheetOpen,
@@ -23,11 +31,14 @@ const MinutesTab = (props) => {
     minutesOpen,
     meetingItems,
     refetchMeetingItems,
-    meetingDate
+    fetchDataLoading,
+    meetingDate,
   } = props;
   const [newBusiness, setNewBusiness] = useState([]);
   const [oldBusiness, setOldBusiness] = useState([]);
   const [deleteMeetingItemOpen, setDeleteMeetingItemOpen] = useState(false);
+  const { t } = useTranslation();
+
   useEffect(() => {
     refetchMeetingItems();
   }, [meetingId]);
@@ -48,7 +59,7 @@ const MinutesTab = (props) => {
         {
           method: 'delete',
         }
-      )
+      );
       if (response?.status === 204) {
         await refetchMeetingItems();
         setDeleteMeetingItemOpen(false);
@@ -56,36 +67,44 @@ const MinutesTab = (props) => {
     }
   }, [selectedMeetingItem, refetchMeetingItems]);
 
-  const handleEdit = (item) => {
+  const handleEdit = item => {
     setIsEdit(true);
     setSideSheetOpen(true);
     setMeetingItem(item);
-  }
+  };
 
-  const handleDelete = (item) => {
+  const handleDelete = item => {
     setDeleteMeetingItemOpen(true);
     setMeetingItem(item);
-  }
+  };
 
-  const actionList = useMemo(
-    () => [
+  const actionList = useMemo(() => {
+    let disabled = false;
+    if (series && meeting) {
+      const meetings = series?.cpsMeeting_groupCpsMeeting;
+      const nextMeeting =
+        meetings[meetings?.findIndex(m => m.id === meeting.id) + 1];
+
+      disabled = !!nextMeeting;
+    }
+
+    return [
       {
         id: 1,
-        title: 'Edit',
+        title: t('Edit'),
         icon: EditIcon,
         onClick: handleEdit,
-        disabled: false
+        disabled: disabled,
       },
       {
         id: 2,
-        title: 'Delete',
+        title: t('Delete'),
         icon: DeleteIcon,
         onClick: handleDelete,
-        disabled: false
-      }
-    ],
-    []
-  );
+        disabled: disabled,
+      },
+    ];
+  }, [series, meeting]);
 
   const gridOptionsOldBusiness = {
     defaultColDef: {
@@ -96,7 +115,7 @@ const MinutesTab = (props) => {
       params.api.expandAll();
     },
     autoGroupColumnDef: {
-      headerName: 'Category', 
+      headerName: t('Category'),
       width: 100,
       hide: true,
     },
@@ -104,18 +123,18 @@ const MinutesTab = (props) => {
     groupRowRenderer: 'agGroupCellRenderer',
     groupDefaultExpanded: 1, // Set the default number of levels to expand
     columnDefs: [
-      { 
-        field: 'category_title', 
-        rowGroup: true, 
+      {
+        field: 'category_title',
+        rowGroup: true,
         hide: true,
-      }, 
+      },
       {
         headerName: '#',
         field: 'item_meeting_number',
-        width: 10,
+        width: 5, // can't shrink beyond ag-grid enforced min-width
       },
       {
-        headerName: 'Item',
+        headerName: t('Description'),
         field: 'subject',
         width: 200,
         autoHeight: true,
@@ -123,36 +142,35 @@ const MinutesTab = (props) => {
         cellRenderer: 'meetingItemsRenderer',
       },
       {
-        headerName: 'Due Date',
-        field: 'due_date',
-        width: 70,
-      },
-      {
-        headerName: 'Priority',
-        field: 'priority',
-        width: 60,
-      },
-      {
-        headerName: 'Owner',
+        headerName: t('Owner'),
         field: 'owner',
-        width: 100,
+        width: 50,
       },
       {
-        headerName: 'Status',
-        field: 'status',
-        width: 60,
+        headerName: t('Priority'),
+        field: 'priority',
+        width: 50,
       },
       {
-        headerName: 'Actions',
+        headerName: t('Due'),
+        field: 'due_date',
+        width: 50,
+      },
+      // {
+      //   headerName: 'Status',
+      //   field: 'status',
+      //   width: 60,
+      // },
+      {
+        headerName: t('Actions'),
         cellRenderer: 'actionsRenderer',
         cellRendererParams: {
           actionList,
         },
         width: 60,
         suppressMenu: true,
-
       },
-    ]
+    ],
   };
 
   const gridOptionsNewBusiness = {
@@ -164,7 +182,7 @@ const MinutesTab = (props) => {
       params.api.expandAll();
     },
     autoGroupColumnDef: {
-      headerName: 'Category', 
+      headerName: t('Category'),
       width: 100,
       hide: true,
     },
@@ -172,18 +190,18 @@ const MinutesTab = (props) => {
     groupRowRenderer: 'agGroupCellRenderer',
     groupDefaultExpanded: 1, // Set the default number of levels to expand
     columnDefs: [
-      { 
-        field: 'category_title', 
-        rowGroup: true, 
+      {
+        field: 'category_title',
+        rowGroup: true,
         hide: true,
-      }, 
+      },
       {
         headerName: '#',
         field: 'item_meeting_number',
-        width: 10,
+        width: 5, // can't shrink beyond ag-grid enforced min-width
       },
       {
-        headerName: 'Item',
+        headerName: t('Description'),
         field: 'subject',
         width: 200,
         autoHeight: true,
@@ -191,36 +209,35 @@ const MinutesTab = (props) => {
         cellRenderer: 'meetingItemsRenderer',
       },
       {
-        headerName: 'Due Date',
-        field: 'due_date',
-        width: 70,
-      },
-      {
-        headerName: 'Priority',
-        field: 'priority',
-        width: 60,
-      },
-      {
-        headerName: 'Owner',
+        headerName: t('Owner'),
         field: 'owner',
-        width: 100,
+        width: 50,
       },
       {
-        headerName: 'Status',
-        field: 'status',
-        width: 60,
+        headerName: t('Priority'),
+        field: 'priority',
+        width: 50,
       },
       {
-        headerName: 'Actions',
+        headerName: t('Due'),
+        field: 'due_date',
+        width: 50,
+      },
+      // {
+      //   headerName: 'Status',
+      //   field: 'status',
+      //   width: 60,
+      // },
+      {
+        headerName: t('Actions'),
         cellRenderer: 'actionsRenderer',
         cellRendererParams: {
           actionList,
         },
         width: 60,
         suppressMenu: true,
-
       },
-    ]
+    ],
   };
 
   return (
@@ -228,33 +245,47 @@ const MinutesTab = (props) => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-      }}>
+      }}
+    >
       <ModalAlert
         open={deleteMeetingItemOpen}
-        title='Delete Meeting Item'
-        message='Are you sure you want to delete this meeting item?'
+        title={t("Delete Meeting Item")}
+        message={t("Are you sure you want to delete this meeting item?")}
         action={deleteItem}
         closeAlert={() => setDeleteMeetingItemOpen(false)}
       />
-      <AmbientGridTemplate
-        title='Old Business'
-        gridOptions={gridOptionsOldBusiness}
-        animateRows='true'
-        domLayout='autoHeight'
-        data={oldBusiness}
-        useNewHeader
-        height={"calc(100vh / 3 + 56)"}
-        frameworkComponents={{ actionsRenderer: ActionsRenderer, meetingItemsRenderer: MeetingItemsRenderer, }}
-      />
-      <AmbientGridTemplate
-        title='New Business'
-        height={"calc(100vh / 3)"}
-        gridOptions={gridOptionsNewBusiness}
-        data={newBusiness}
-        useNewHeader
-        domLayout='autoHeight'
-        frameworkComponents={{ actionsRenderer: ActionsRenderer, meetingItemsRenderer: MeetingItemsRenderer, }}
-      />
+      {fetchDataLoading? (
+        <LinearProgress />
+      ) : (
+        <div>
+          <AmbientGridTemplate
+            title={t("Old Business")}
+            gridOptions={gridOptionsOldBusiness}
+            animateRows="true"
+            domLayout="autoHeight"
+            data={oldBusiness}
+            useNewHeader
+            height={'calc(100vh / 3 + 56)'}
+            frameworkComponents={{
+              actionsRenderer: ActionsRenderer,
+              meetingItemsRenderer: MeetingItemsRenderer,
+            }}
+          />
+          <AmbientGridTemplate
+            title={t("New Business")}
+            height={'calc(100vh / 3)'}
+            gridOptions={gridOptionsNewBusiness}
+            data={newBusiness}
+            useNewHeader
+            domLayout="autoHeight"
+            frameworkComponents={{
+              actionsRenderer: ActionsRenderer,
+              meetingItemsRenderer: MeetingItemsRenderer,
+            }}
+          />
+        </div>
+      )}
+
       <AddMeetingItemSideSheet
         categories={categories}
         refetchCategories={refetchCategories}
@@ -267,11 +298,12 @@ const MinutesTab = (props) => {
         meetingSeriesId={series?.id}
         meetingDate={meetingDate}
         open={minutesOpen}
-        onClose={() => { setMinutesOpen(false) }}
+        onClose={() => {
+          setMinutesOpen(false);
+        }}
       />
     </Box>
   );
 };
 
 export default MinutesTab;
-
