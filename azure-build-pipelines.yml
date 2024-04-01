@@ -26,7 +26,7 @@ jobs:
         displayName: 'Yarn Build'
         inputs:
           projectDirectory: .
-          arguments: 'build:development'
+          arguments: 'build:$(starter.environment)'
       - task: ArchiveFiles@2
         displayName: Archive Build
         inputs:
@@ -37,4 +37,4 @@ jobs:
         displayName: 'Publish Artifact: '
         inputs:
           PathtoPublish: build.zip
-          ArtifactName: ConstructionAssetsUI
+          ArtifactName: $(Artifact.name)
