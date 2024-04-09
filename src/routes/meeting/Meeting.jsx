@@ -223,21 +223,21 @@ const Meeting = props => {
       case 0: // Minutes
         return {
           id: 'udpRecord-Meeting-primaryActionButtonMinutes',
-          udpRecordId: 'udpRecord-Meeting-primaryActionButtonMinutes',
+          udprecordid: 'udpRecord-Meeting-primaryActionButtonMinutes',
           icon: <Add/>,
           title: 'Add Item',
         };
       case 1: // Attendees
         return {
           id: 'udpRecord-Meeting-primaryActionButtonAttendees',
-          udpRecordId: 'udpRecord-Meeting-primaryActionButtonAttendees',
+          udprecordid: 'udpRecord-Meeting-primaryActionButtonAttendees',
           icon: <People/>,
           title: t('Manage Attendees'),
         };
       case 3: // Agenda
         return {
           id: 'udpRecord-Meeting-primaryActionButtonAgenda',
-          udpRecordId: 'udpRecord-Meeting-primaryActionButtonAgenda',
+          udprecordid: 'udpRecord-Meeting-primaryActionButtonAgenda',
           icon: <Assignment/>,
           title: t('Update Agenda'),
         };

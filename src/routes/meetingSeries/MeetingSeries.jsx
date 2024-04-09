@@ -129,7 +129,7 @@ const MeetingSeries = (props) => {
     <PrimaryActionButton 
       onClick={() => setOpen(true)} 
       id='udpRecord-MeetingSeries-NewMeetingSeries' 
-      udpRecordId='udpRecord-MeetingSeries-NewMeetingSeries'
+      udprecordid='udpRecord-MeetingSeries-NewMeetingSeries'
     >
       <Typography>New Meeting Series</Typography>
       <AddIcon />

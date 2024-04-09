@@ -245,6 +245,8 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
       open={open}
       onClose={onClose}
       width={'600px'}
+      id="udpRecord-AddMeetingItemSideSheet"
+      udprecordid="udpRecord-AddMeetingItemSideSheet"
     >
       <Form ref={formRef} onSubmit={handleSubmit}>
         <FormButtons style={{ position: 'absolute', top: 0, right: 0}}>
@@ -252,6 +254,7 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
               variant="contained"
               color="primary"
               style={{ fontSize: '30px', padding: '10px 20px' }}
+              udprecordid={"udpRecord-AddMeetingItemSideSheet-submit"}
             >
               {isEdit ? "Update" : "Add"}
             </SubmitButton>
@@ -262,6 +265,7 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
             label="Status"
             id="Status"
             name="status"
+            udprecordid={"udpRecord-AddMeetingItemSideSheet-status"}
             margin="normal"
             options={['Open', 'Closed', 'Info']}
             style={{ width: '275px' }}
@@ -272,6 +276,7 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
           label="Subject"
           id="Subject"
           name="subject"
+          udprecordid={"udpRecord-AddMeetingItemSideSheet-subject"}
           variant="outlined"
           size="small"
           required
@@ -285,6 +290,7 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
           label="Description"
           id="Description"
           name="description"
+          udprecordid={"udpRecord-AddMeetingItemSideSheet-description"}
           variant="outlined"
           required
           initialValue={selectedMeetingItem?.description ? selectedMeetingItem.description : null}
@@ -302,6 +308,7 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
             label="Due Date"
             id="Due Date"
             name="due_date"
+            udprecordid={"udpRecord-AddMeetingItemSideSheet-due_date"}
             variant="outlined"
             // initialValue={selectedMeetingItem?.dueDate ? selectedMeetingItem.dueDate : null}
             initialValue={formatDate(selectedMeetingItem?.due_date)}
@@ -313,6 +320,7 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
             label="Priority"
             id="Priority"
             name="priority"
+            udprecordid={"udprecord-AddMeetingItemSideSheet-priority"}
             options={['None', 'Low', 'Medium', 'High', 'Critical']}
             style={{ width: '275px' }}
             initialValue={selectedMeetingItem?.priority ? selectedMeetingItem.priority : null}
@@ -323,6 +331,7 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
           label="Owner"
           id="Owner"
           name="owner"
+          udprecordid={"udprecord-AddMeetingItemSideSheet-owner"}
           options={meetingAttendeesFirstName}
           optionKey="name"
           style={{ width: '275px' }}
@@ -336,6 +345,7 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
               label="Action Date"
               id="Action Date"
               name="action_date"
+              udprecordid={"udprecord-AddMeetingItemSideSheet-action_date"}
               variant="outlined"
               initialValue={meetingDate}
               required
@@ -359,6 +369,7 @@ const AddMeetingItemSideSheet = ({ open, onClose, meetingId, meetingSeriesId, re
           label="Action Taken"
           id="Action Taken"
           name="action_taken"
+          udprecordid={"udpRecord-AddMeetingItemSideSheet-action_taken"}
           variant="outlined"
           initialValue={getMeetingItemActionForMeeting(false)}
         />

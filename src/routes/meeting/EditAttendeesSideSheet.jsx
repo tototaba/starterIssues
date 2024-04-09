@@ -265,7 +265,7 @@ const EditAttendeesSideSheet = ({
       open={open}
       width={"800px"}
       id={"udpRecord-EditAttendeesSideSheet-submit"}
-      udpRecordId={"udpRecord-EditAttendeesSideSheet-submit"}
+      udprecordid={"udpRecord-EditAttendeesSideSheet-submit"}
     >
       <Form onSubmit={handleSubmit} ref={formRef}>
         <Field

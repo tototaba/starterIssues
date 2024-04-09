@@ -38,7 +38,7 @@ const CategoryManager = ({
                             )
                             : null
                     }
-                    udpRecordId='udpRecord-CategoryManager-Category'
+                    udprecordid='udpRecord-CategoryManager-Category'
                 />
 
                 <FluentButton

@@ -167,6 +167,10 @@ const CreateMeetingSideSheet = (props) => {
       hour12: true,
     };
 
+    /*let startTime = values.startTime.toLocaleTimeString(undefined, options);
+    let endTime = values.endTime.toLocaleTimeString(undefined, options);
+
+    */
     //24hr to 12hr
     const startTimeString = values.startTime;
     const [startHours, StartMinutes] = startTimeString.split(":");
@@ -180,13 +184,39 @@ const CreateMeetingSideSheet = (props) => {
     const fullendTime = new Date(endToday.getFullYear(), endToday.getMonth(), endToday.getDate(), endHours, endMinutes);
     const endTimeStringFormated = fullendTime.toLocaleTimeString(undefined, options);
 
+    // Normalize the year number within the date  
+    const dateObject = new Date(values.date);  
+    let normalizedYear = dateObject.getFullYear();  
+    
+    // Set the year boundaries  
+    const minYear = 2000;  
+    const maxYear = 9999;  
+    
+    // Check if the year is outside the boundaries and adjust if necessary  
+    if (normalizedYear < minYear) {  
+      normalizedYear = minYear;  
+    } else if (normalizedYear > maxYear) {  
+      normalizedYear = maxYear;  
+    }  
+    
+    // Create a new date object with the normalized year while keeping the original month and day  
+    const normalizedDate = new Date(dateObject.setFullYear(normalizedYear));  
+    
+    // Format the normalized date as needed, e.g., toISOString, toLocaleDateString, etc.  
+    // For this example, let's assume you want to keep the date in ISO format (YYYY-MM-DD)  
+    const normalizedDateString = normalizedDate.toISOString().split('T')[0]; 
     const meeting = {
       Group_id: values.MeetingSeries.id,
       Meeting_number: values.MeetingNumber,
       Title: values.Title,
       Status: "Active",
       Location: values.Location,
-      Date: values.date,
+      //Date: values.date,
+      Date: normalizedDateString,
+/*
+      Start_time: startTime,
+      End_time: endTime,
+      */
       Start_time: StartTimeStringFormated,
       End_time: endTimeStringFormated,
     }
@@ -349,7 +379,6 @@ const CreateMeetingSideSheet = (props) => {
   }
 
   const handleSwitchChange = useCallback((event) => {
-    console.log("tst")
     setMakeMeetingInOutlook(event.target.checked);
   }, [setMakeMeetingInOutlook])
 
@@ -407,6 +436,7 @@ const CreateMeetingSideSheet = (props) => {
         component={FluentTextFieldAutoComplete}
         label="Meeting Series"
         id="MeetingSeries"
+        udprecordid="udpRecord-CreateMeetingSideSheet-MeetingSeries"
         name="MeetingSeries"
         variant="outlined"
         margin="none"
@@ -420,7 +450,12 @@ const CreateMeetingSideSheet = (props) => {
       />
       <p>OR</p>
       <Box sx={{ padding: "1rem" }}>
-        <Button variant="contained" onClick={() => { setCreateSeriesOpen(true) }}>
+        <Button 
+          variant="contained" 
+          onClick={() => { setCreateSeriesOpen(true) }}
+          id="udpRecord-CreateMeetingSideSheet-CreateNewMeetingSeries"
+          udprecordid="udpRecord-CreateMeetingSideSheet-CreateNewMeetingSeries"
+        >
           Create New Meeting Series
         </Button>
       </Box>
@@ -492,8 +527,9 @@ const CreateMeetingSideSheet = (props) => {
 
         <Field
           label={"Start Time"}
-          type='time'
-          component={TextField}
+          //type='time'
+          //component={TextField}
+          component={FluentTimePicker}
           id="startTime"
           name="startTime"
           fullWidth
@@ -508,8 +544,9 @@ const CreateMeetingSideSheet = (props) => {
         />
         <Field
           label={"End Time"}
-          type='time'
-          component={TextField}
+          //type='time'
+          //component={TextField}
+          component={FluentTimePicker}
           id="endTime"
           name="endTime"
           fullWidth
@@ -528,6 +565,7 @@ const CreateMeetingSideSheet = (props) => {
           label={"Attendees"}
           component={FluentTextFieldAutoComplete}
           id="users"
+          udprecordid="udpRecord-CreateMeetingSideSheet-users"
           name="users"
           fullWidth
           variant="outlined"
@@ -567,7 +605,9 @@ const CreateMeetingSideSheet = (props) => {
 
   ];
   return (
-    <SideSheet title="Create a Meeting" onClose={handleClose} open={open} width={"800px"}>
+    <SideSheet id="udpRecord-CreateMeetingSideSheet"
+      title="Create a Meeting" onClose={handleClose} open={open} width={"800px"}
+    >
       <CreateMeetingSeriesSideSheet createAction={handleCreateMeetingSeries} open={createSeriesOpen} onClose={() => { setCreateSeriesOpen(false) }} />
       <AmbientStepper activeStep={activeStep} steps={steps} />
       <Box sx={{ padding: "1em" }}>
@@ -595,13 +635,16 @@ const CreateMeetingSideSheet = (props) => {
           {formSections[activeStep]}
           <Box mt={2} sx={{ alignItems: 'center' }}>
             {activeStep !== 0 && (
-              <FluentButton variant="outlined" color="primary" onClick={handleBack}>Back</FluentButton>
+              <FluentButton id="udpRecord-CreateMeetingSideSheet-Back" udprecordid="udpRecord-CreateMeetingSideSheet-Back"
+                variant="outlined" color="primary" onClick={handleBack}>Back</FluentButton>
             )}
             {activeStep !== steps.length - 1 && (
-              <FluentButton variant="outlined" color="primary" onClick={handleNext} disabled={(!isFirstFormValid && activeStep === 0) || !isSecondFormValid && activeStep ===1 }>Next</FluentButton>
+              <FluentButton id="udpRecord-CreateMeetingSideSheet-Next" udprecordid="udpRecord-CreateMeetingSideSheet-Next"
+                variant="outlined" color="primary" onClick={handleNext} disabled={(!isFirstFormValid && activeStep === 0) || !isSecondFormValid && activeStep ===1 }>Next</FluentButton>
             )}
             {activeStep === steps.length - 1 && (
-              <FluentButton variant="outlined" color="primary" type="submit">Submit</FluentButton>
+              <FluentButton id="udpRecord-CreateMeetingSideSheet-Submit" udprecordid="udpRecord-CreateMeetingSideSheet-Submit"
+                variant="outlined" color="primary" type="submit">Submit</FluentButton>
             )}
           </Box>
         </Form>

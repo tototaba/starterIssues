@@ -222,7 +222,7 @@ const EditMeetingSideSheet = (props) => {
             variant='outlined'
             size='small'
             initialValue={meeting ? meeting.title : ''}
-            udpRecordId={'udpRecord-EditMeetingSideSheet-Title'}
+            udprecordid={'udpRecord-EditMeetingSideSheet-Title'}
           />
           <Field
             component={TextField}
@@ -232,7 +232,7 @@ const EditMeetingSideSheet = (props) => {
             variant='outlined'
             size='small'
             initialValue={meeting ? meeting.meeting_number : ''}
-            udpRecordId={'udpRecord-EditMeetingSideSheet-meeting_Number'}
+            udprecordid={'udpRecord-EditMeetingSideSheet-meeting_Number'}
           />
         </Box>
         <Field
@@ -243,7 +243,7 @@ const EditMeetingSideSheet = (props) => {
           variant='outlined'
           size='small'
           initialValue={meeting ? meeting.location : ''}
-          udpRecordId={'udpRecord-EditMeetingSideSheet-Location'}
+          udprecordid={'udpRecord-EditMeetingSideSheet-Location'}
         />
         <Box display='flex' direction='row' sx={{ gap: '1rem' }}>
           <Field
@@ -253,7 +253,7 @@ const EditMeetingSideSheet = (props) => {
             name='date'
             variant='outlined'
             initialValue={meeting ? meeting.date : ''}
-            udpRecordId={'udpRecord-EditMeetingSideSheet-Date'}
+            udprecordid={'udpRecord-EditMeetingSideSheet-Date'}
           />
           <Field
             type='time'
@@ -267,7 +267,7 @@ const EditMeetingSideSheet = (props) => {
               shrink: true,
             }}
             className={classes.smallerTextField}
-            udpRecordId={'udpRecord-EditMeetingSideSheet-Start_Time'}
+            udprecordid={'udpRecord-EditMeetingSideSheet-Start_Time'}
           />
           <Field
             type='time'
@@ -281,7 +281,7 @@ const EditMeetingSideSheet = (props) => {
               shrink: true,
             }}
             className={classes.smallerTextField}
-            udpRecordId={'udpRecord-EditMeetingSideSheet-End_Time'}
+            udprecordid={'udpRecord-EditMeetingSideSheet-End_Time'}
           />
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', margin: '1rem' }}>
@@ -314,7 +314,7 @@ const EditMeetingSideSheet = (props) => {
             color='primary'
             type='submit'
             id={'udpRecord-EditMeetingSideSheet-Update'}
-            udpRecordId={'udpRecord-EditMeetingSideSheet-Update'}
+            udprecordid={'udpRecord-EditMeetingSideSheet-Update'}
           >
             Update
           </FluentButton>

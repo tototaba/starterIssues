@@ -19,6 +19,8 @@ const CreateMeetingSeriesSideSheet = ({ open, onClose, createAction }) => {
       open={open}
       buttonLabel="Create"
       onSubmit={() => { createAction(formRef.current.values) }}
+      id="udprecord-CreateMeetingSeriesSideSheet"
+      udprecordid="udprecord-CreateMeetingSeriesSideSheet"
     >
       <Form Form ref={formRef} onSubmit={createAction} >
         <Field

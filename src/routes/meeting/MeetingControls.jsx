@@ -162,7 +162,7 @@ const MeetingControls = props => {
         />
         <IconButtonWithTooltip
           id={'udpRecord-MeetingControls-FirstMeeting'}
-          udpRecordId={'udpRecord-MeetingControls-FirstMeeting'}
+          udprecordid={'udpRecord-MeetingControls-FirstMeeting'}
           icon={SkipPrevious}
           title={t('First Meeting')}
           disabled={isFirstMeeting()}
@@ -170,7 +170,7 @@ const MeetingControls = props => {
         />
         <IconButtonWithTooltip
           id={'udpRecord-MeetingControls-PreviousMeeting'}
-          udpRecordId={'udpRecord-MeetingControls-PreviousMeeting'}
+          udprecordid={'udpRecord-MeetingControls-PreviousMeeting'}
           icon={ArrowBackIosNewOutlined}
           title={t('Previous Meeting')}
           disabled={isFirstMeeting()}
@@ -178,7 +178,7 @@ const MeetingControls = props => {
         />
         <IconButtonWithTooltip
           id={'udpRecord-MeetingControls-NextMeeting'}
-          udpRecordId={'udpRecord-MeetingControls-NextMeeting'}
+          udprecordid={'udpRecord-MeetingControls-NextMeeting'}
           icon={ArrowForwardIosOutlined}
           title={t('Next Meeting')}
           disabled={isLastMeeting}
@@ -186,7 +186,7 @@ const MeetingControls = props => {
         />
         <IconButtonWithTooltip
           id={'udpRecord-MeetingControls-LastMeeting'}
-          udpRecordId={'udpRecord-MeetingControls-LastMeeting'}
+          udprecordid={'udpRecord-MeetingControls-LastMeeting'}
           icon={SkipNext}
           title={t('Last Meeting')}
           disabled={isLastMeeting}
@@ -216,7 +216,7 @@ const MeetingControls = props => {
             marginLeft: '10px',
           }}
           id={'udpRecord-MeetingControls-EditMeeting'}
-          udpRecordId={'udpRecord-MeetingControls-EditMeeting'}
+          udprecordid={'udpRecord-MeetingControls-EditMeeting'}
         >
           <IconButtonWithTooltip icon={Edit} title={t('Edit Meeting')} />{' '}
           {t('Edit Meeting')}
@@ -233,7 +233,7 @@ const MeetingControls = props => {
               }
               icon={primaryActionButton?.icon}
               id={primaryActionButton?.id}
-              udpRecordId={primaryActionButton?.udpRecordId}
+              udprecordid={primaryActionButton?.udprecordid}
             >
               <Typography variant='subtitle'>{primaryActionButton?.title}</Typography>
             </PrimaryActionButton>
