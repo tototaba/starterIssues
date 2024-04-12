@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 
 const AppBarControls = props => {
   const classes = useStyles();
-  const [sideSheetOpen, setSideSheetOpen] = useState(false);
+  const [sideSheetOpen, setSideSheetOpen, id, udprecordid] = useState(false);
   return (
     <div className={classes.root}>
       <div className={classes.right}>
@@ -32,10 +32,14 @@ const AppBarControls = props => {
           className={classes.label}
           icon={SettingsIcon}
           onClick={() => setSideSheetOpen(true)}
+          id={id}
+          udprecordid={udprecordid}
         />
         <SettingsSideSheet
           isOpen={sideSheetOpen}
           onClose={() => setSideSheetOpen(false)}
+          id={id}
+          udprecordid={udprecordid}
         />
       </div>
     </div>

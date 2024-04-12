@@ -43,7 +43,7 @@ const ShellWrapper = props => {
   return (
     <Shell
       userAvatar={userAvatar}
-      appContent={<AppBarControls />}
+      appContent={<AppBarControls id="udpRecord-AppBarControls-icon" udprecordid="udpRecord-AppBarControls-icon"/>}
       user={user}
       leftMenu={leftMenu}
       appSelectorMenus={appSelectorMenus}

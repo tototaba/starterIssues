@@ -57,7 +57,11 @@ export const MenuOpener: FC<MenuOpenerProps> = ({
   return (
     <>
       {cloneElement(button, bindTrigger(popupState))}
-      <MenuComponent {...menuProps} {...bindMenu(popupState)} onClick={click}>
+      <MenuComponent 
+        {...menuProps} {...bindMenu(popupState)} onClick={click}
+        id="udpRecord-MenuOpener"
+        udprecordid="udpRecord-MenuOpener"
+      >
         {children}
       </MenuComponent>
     </>

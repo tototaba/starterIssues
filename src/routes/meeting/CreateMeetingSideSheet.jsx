@@ -489,7 +489,7 @@ const CreateMeetingSideSheet = (props) => {
           initialValue={meetingCount}
         />
       </Box>
-      <Box sx={{ display: "grid", gridTemplateColumns: "5fr 0fr 3fr", gap: "1rem", alignItems: "center" }} >
+      <Box sx={{ display: "grid", gridTemplateColumns: "1fr 0fr", alignItems: "center" }} >
 
         <Field
           component={TextField}
@@ -512,18 +512,9 @@ const CreateMeetingSideSheet = (props) => {
           <Box sx={{ whiteSpace: "nowrap" }}>Online Meeting</Box>
         </Box>
 
-        <Field
-          label={"Date"}
-          component={FluentDatePicker}
-          id="date"
-          name="date"
-          variant="outlined"
-          margin="normal"
-          size="small"
-          required
-        />
+
       </Box>
-      <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }} >
+      <Box sx={{ display: "flex", justifyContent: "space-evenly" }} >
 
         <Field
           label={"Start Time"}
@@ -559,6 +550,16 @@ const CreateMeetingSideSheet = (props) => {
           }}
         // initialValue={}
         />
+        <Field
+          label={"Date"}
+          component={FluentDatePicker}
+          id="date"
+          name="date"
+          variant="outlined"
+          margin="normal"
+          size="small"
+          required
+        />
       </Box >
       <Box>
         <Field
@@ -582,6 +583,8 @@ const CreateMeetingSideSheet = (props) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: "10px" }}>
             <FluentToggle
               onChange={handleSwitchChange}
+              id="udprecord-CreateMeetingSideSheet-outlook"
+              udprecordid="udprecord-CreateMeetingSideSheet-outlook"
             />
             <Typography>
               Create Meeting in Outlook

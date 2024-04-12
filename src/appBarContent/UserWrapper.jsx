@@ -16,7 +16,7 @@ const IS_LOCAL_AUTH = process.env.REACT_APP_LOCAL_AUTH === 'true';
 
 const UserWrapper = props => {
   const classes = useStyles();
-  const { returnTo, tenant, unityUrl, user, userHasAccessToTenant } = props;
+  const { returnTo, tenant, unityUrl, user, userHasAccessToTenant, id, udprecordid } = props;
 
   const singleLogout = useSingleLogout();
 
@@ -33,7 +33,10 @@ const UserWrapper = props => {
       {user ? (
         <MenuOpener
           button={
-            <IconButton>
+            <IconButton
+              id={id}
+              udprecordid={udprecordid}
+            >
               <UserAvatar
                 name={user?.name}
                 email={user?.email}

@@ -178,9 +178,11 @@ const Routes = () => {
                 unityUrl={process.env.REACT_APP_UNITY_URL}
                 user={user}
                 userHasAccessToTenant={userHasAccessToTenant}
+                id={'udpRecord-Routes-UserAvatar'}
+                udprecordid={'udpRecord-Routes-UserAvatar'}
               />
             }
-            appContent={<AppBarControls />}
+            appContent={<AppBarControls id="udpRecord-AppBarControls-icon" udprecordid="udpRecord-AppBarControls-icon"/>}
             leftMenu={userHasAccessToTenant ? leftMenu : []}
             appSelectorMenus={userHasAccessToTenant ? appSelectorMenus : []}
             user={user}
