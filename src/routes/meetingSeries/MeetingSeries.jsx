@@ -8,6 +8,7 @@ import {
   useAgGridApi,
   useAxiosGet,
   useOutlook,
+  PrimaryActionHeader,
 } from 'unity-fluent-library';
 import {
   AssignIcon,
@@ -18,8 +19,9 @@ import {
 import { Typography, Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import CreateMeetingSideSheet from '../meeting/CreateMeetingSideSheet';
+import { AmbientTemplateGrid } from 'unity-ambient-x-react';
 
-const MeetingSeries = (props) => {
+const MeetingSeries = props => {
   const { params, ...other } = props;
   const [loading, setLoading] = useState(false);
   const { gridApi, onGridReady } = useAgGridApi();
@@ -27,7 +29,9 @@ const MeetingSeries = (props) => {
   const history = useHistory();
   const user = useUser();
 
-  const getAccessToken = useOutlook(process.env.REACT_APP_MINUTES_URL + "/callback");
+  const getAccessToken = useOutlook(
+    process.env.REACT_APP_MINUTES_URL + '/callback'
+  );
 
   useEffect(() => {
     const fetch = async () => {
@@ -37,7 +41,7 @@ const MeetingSeries = (props) => {
       } catch (error) {
         console.log(error);
       }
-    }
+    };
     fetch();
   }, []);
 
@@ -60,7 +64,6 @@ const MeetingSeries = (props) => {
     setOpen(false);
   };
 
-
   const actionList = useMemo(
     () => [
       {
@@ -68,14 +71,14 @@ const MeetingSeries = (props) => {
         title: 'Edit Meeting Series',
         icon: EditIcon,
         // onClick: handleEdit,
-        disabled: false
+        disabled: false,
       },
       {
         id: 2, // Must be unique
         title: 'Update Item Form',
         icon: AssignIcon,
         // onClick: handleUpdate,
-        disabled: false
+        disabled: false,
       },
 
       {
@@ -83,8 +86,8 @@ const MeetingSeries = (props) => {
         title: 'Manage Meeting Observers',
         icon: ContactIcon,
         // onClick: handleManage,
-        disabled: false
-      }
+        disabled: false,
+      },
     ],
     []
   );
@@ -99,9 +102,9 @@ const MeetingSeries = (props) => {
     },
     columnDefs: [
       // { headerName: 'Meeting Series id', field: 'id', },
-      { headerName: 'Title', field: 'name', },
-      { headerName: 'Meetings in Series', field: 'meeting_count', },
-      { headerName: 'Open Items', field: 'item_count', },
+      { headerName: 'Title', field: 'name' },
+      { headerName: 'Meetings in Series', field: 'meeting_count' },
+      { headerName: 'Open Items', field: 'item_count' },
       // { headerName: 'Draft Sent', field: 'draft_sent', },
       // { headerName: 'Final Sent', field: 'final_sent', },
       // {
@@ -119,26 +122,65 @@ const MeetingSeries = (props) => {
     event => {
       let selectedMeetingSeries = event.data;
       if (selectedMeetingSeries) {
-        history.push(`/meetings/${selectedMeetingSeries.id}`)
+        history.push(`/meetings/${selectedMeetingSeries.id}`);
       }
     },
     [gridApi, history]
   );
 
   const addMeetingSeriesButton = (
-    <PrimaryActionButton 
-      onClick={() => setOpen(true)} 
-      id='udpRecord-MeetingSeries-NewMeetingSeries' 
-      udprecordid='udpRecord-MeetingSeries-NewMeetingSeries'
+    <PrimaryActionButton
+      onClick={() => setOpen(true)}
+      id="udpRecord-MeetingSeries-NewMeetingSeries"
+      udpRecordId="udpRecord-MeetingSeries-NewMeetingSeries"
     >
       <Typography>New Meeting Series</Typography>
       <AddIcon />
     </PrimaryActionButton>
   );
 
+  const renderConfigs = [
+    {
+      field: 'actions',
+      rendererName: 'hotListAddRenderer',
+      otherField: 'id',
+      callbackId: 'handleRowSelected',
+    },
+  ];
+
+  const handleCellClick = (value, callback) => {
+    if (callback === 'handleRowSelected') {
+      history.push(`/meetings/${value.id}`);
+    }
+  };
+
   return (
     <>
-      <AmbientGridTemplate
+      <PrimaryActionHeader
+        title="Meeting Series"
+        single
+        buttonLabel={'New Meeting Series'}
+        id="udprecord-meetingseries-newmeetingseries"
+        udpRecordId="udprecord-meetingseries-newmeetingseries"
+        handleClick={() => setOpen(true)}
+      />
+
+      <AmbientTemplateGrid
+        queryId={process.env.REACT_APP_MEETING_SERIES_QUERY_ID}
+        tenantId={user.currentTenantId}
+        userId={user.id}
+        gridId={'2607cfa1-2306-43cd-93c0-3202935567e0'}
+        productId={53}
+        accessToken={user.accessToken}
+        user={user}
+        callbackId="2"
+        cellClickHandler={handleCellClick.bind(this)}
+        cellClickHandlerX={handleCellClick.bind(this)}
+        renderConfigs={renderConfigs}
+        fitGrid='fit'
+      ></AmbientTemplateGrid>
+
+      {/* <AmbientGridTemplate
         title='Meeting Series'
         primaryActionButton={addMeetingSeriesButton}
         gridOptions={gridOptions}
@@ -152,7 +194,8 @@ const MeetingSeries = (props) => {
         hideGroupTab
         hideColumnTab
         frameworkComponents={{ actionsRenderer: ActionsRenderer }}
-      />
+      /> */}
+
       <CreateMeetingSideSheet
         open={open}
         onClose={handleOnClose}

@@ -17,6 +17,7 @@ import { Typography } from '@material-ui/core';
 import { formatDate, formatDateString } from '../../utils/formatDateHelpers';
 import { useHistory } from 'react-router-dom';
 import CreateMeetingSideSheet from '../meeting/CreateMeetingSideSheet';
+import { AmbientTemplateGrid } from 'unity-ambient-x-react';
 
 const Meetings = (props) => {
   const { match, ...other } = props;
@@ -142,6 +143,30 @@ const Meetings = (props) => {
     </PrimaryActionButton>
   )
 
+  const defaultSearchObject = [{
+    searchField: 'group_id',
+    searchOperator: '=',
+    searchValue: meetingSeriesId
+  }]
+
+  const renderConfigs = [
+    {
+      field: 'actions',
+      rendererName: 'hotListAddRenderer',
+      otherField: 'id',
+      callbackId: 'handleRowSelected',
+    },
+  ];
+
+  const handleCellClick = (value, callback) => {
+    if (callback === 'handleRowSelected') {
+      history.push({
+        pathname: `/meetings/${meetingSeriesId}/meeting/${value.id}`,
+        state: { meeting: meetings }
+      })
+    }
+  };
+
   return (
     <>
       <CreateMeetingSideSheet
@@ -150,7 +175,24 @@ const Meetings = (props) => {
         tenantUsers={tenantUsers}
         meetingSeries={meetingSeries}
       />
-      <AmbientGridTemplate
+
+    <AmbientTemplateGrid
+        queryId={process.env.REACT_APP_MEETINGS_QUERY_ID}
+        tenantId={user.currentTenantId}
+        userId={user.id}
+        gridId={'009246e6-158b-48da-aa00-93f6b58ebaa2'}
+        productId={53}
+        accessToken={user.accessToken}
+        user={user}
+        callbackId="2"
+        cellClickHandler={handleCellClick.bind(this)}
+        cellClickHandlerX={handleCellClick.bind(this)}
+        renderConfigs={renderConfigs}
+        defaultSearchObject={defaultSearchObject}
+        fitGrid='fit'
+      ></AmbientTemplateGrid>
+
+      {/* <AmbientGridTemplate
         title='Meetings'
         primaryActionButton={addMeetingButton}
         gridOptions={gridOptions}
@@ -163,7 +205,7 @@ const Meetings = (props) => {
         hideGroupTab
         hideColumnTab
         frameworkComponents={{ actionsRenderer: ActionsRenderer }}
-      />
+      /> */}
     </>
 
   );
