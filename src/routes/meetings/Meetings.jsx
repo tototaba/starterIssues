@@ -6,6 +6,7 @@ import {
   useAgGridApi,
   useAxiosGet,
   useUser,
+  PrimaryActionHeader,
 } from 'unity-fluent-library';
 import {
   AssignIcon,
@@ -174,6 +175,15 @@ const Meetings = (props) => {
         onClose={handleOnClose}
         tenantUsers={tenantUsers}
         meetingSeries={meetingSeries}
+      />
+
+<PrimaryActionHeader
+        title="Meetings"
+        single
+        buttonLabel={'Add Meeting'}
+        id="udpRecord-Meetings-newMeetingSeries"
+        udpRecordId="udpRecord-meetingSeries-newMeetingSeries"
+        handleClick={() => setOpen(true)}
       />
 
     <AmbientTemplateGrid
