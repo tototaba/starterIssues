@@ -16246,19 +16246,19 @@ unist-util-visit@^5.0.0:
     unist-util-is "^6.0.0"
     unist-util-visit-parents "^6.0.0"
 
-unity-ambient-x-react@24.0.0-beta.11:
-  version "24.0.0-beta.11"
-  resolved "https://registry.yarnpkg.com/unity-ambient-x-react/-/unity-ambient-x-react-24.0.0-beta.11.tgz#eac27f4b7f21b83582ed199f80996ad27dd5f183"
-  integrity sha512-YXjM8d2svgknqNgLZertnJwsqLFIVFrbvs0BWVxdhHcjbAd+QpD2sv7j8ezPOkabH+/0pM8c5jO5Q9u392aVhw==
+unity-ambient-x-react@24.0.0-beta.12:
+  version "24.0.0-beta.12"
+  resolved "https://registry.yarnpkg.com/unity-ambient-x-react/-/unity-ambient-x-react-24.0.0-beta.12.tgz#c892fd8864eed7ce19d96b35f3a82d6ff309713b"
+  integrity sha512-cODjGcjglHsl1l9N2liKb9v9rJg6eO5BWG5+hyHtbF15SKkTxYUlao5F3LclWChBKGTbjTmEWopYnguaacMyAQ==
   dependencies:
     nodemon "^3.0.3"
-    unity-ambient-x "24.0.2-beta.10"
+    unity-ambient-x "24.0.2-beta.14"
     yalc "^1.0.0-pre.53"
 
-unity-ambient-x@24.0.2-beta.10:
-  version "24.0.2-beta.10"
-  resolved "https://registry.yarnpkg.com/unity-ambient-x/-/unity-ambient-x-24.0.2-beta.10.tgz#6ab04fb9edba22ddbf65008241fb04e95d763e02"
-  integrity sha512-yqTvm96zR4TIkPgHUQ8eIJrIO+P6fsxZCioRYapD0Bkw+q6fyp7rCb/1t4Sck6JZjXNesqQRH96gKQGUR/09ag==
+unity-ambient-x@24.0.2-beta.14:
+  version "24.0.2-beta.14"
+  resolved "https://registry.yarnpkg.com/unity-ambient-x/-/unity-ambient-x-24.0.2-beta.14.tgz#e6ff731bb56745f82969bd089d9f608f00e574d3"
+  integrity sha512-oFNCkpUv+DTaNFpWJGIHDohxlo+dxfh1XbTs8QBMS9T9Noc7Iyo6qGesq3svNIxrM82b41Get1kryMm6uNYzgg==
   dependencies:
     "@carbon/icons" "^11.25.0"
     "@fluentui/react-icons-mdl2" "^1.3.49"
@@ -16275,10 +16275,10 @@ unity-ambient-x@24.0.2-beta.10:
     npmlink "^0.1.0"
     yalc "^1.0.0-pre.53"
 
-unity-fluent-library@24.0.1-alpha.1:
-  version "24.0.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/unity-fluent-library/-/unity-fluent-library-24.0.1-alpha.1.tgz#92f848ad066bae61e760a24804c1aab006969327"
-  integrity sha512-1NUfBR4q3/fPNLUCCjPpEqeLK2trQ2tOeTsoW97dX0lcNgj2DcQRJrGu7O+l5qosVFB8WxOcGbvBFbZ92Z3OYQ==
+unity-fluent-library@24.0.2-alpha.1:
+  version "24.0.2-alpha.1"
+  resolved "https://registry.yarnpkg.com/unity-fluent-library/-/unity-fluent-library-24.0.2-alpha.1.tgz#f2c93f45e3c5fe50c2b0ce7266abb55ea9ef8e06"
+  integrity sha512-8k2swBt+iTIpgU4Cesj6oXBiOSSc27GpflxovpvR8uZfWSbktCnCDg/3L2RdJ/LNntMyTiwoiNSdzfjogzwOKg==
   dependencies:
     "@ag-grid-community/core" "^26.2.0"
     "@ag-grid-community/csv-export" "^26.2.0"
@@ -16349,7 +16349,7 @@ unity-fluent-library@24.0.1-alpha.1:
     sass "^1.32.11"
     spdx-expression-parse "^3.0.1"
     timeago-react "^3.0.1"
-    unity-ambient-x-react "24.0.0-beta.11"
+    unity-ambient-x-react "24.0.0-beta.12"
     use-constant "^1.1.0"
     uuid "^8.1.0"
     vega "^5.22.1"
