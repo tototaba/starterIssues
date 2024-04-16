@@ -179,6 +179,7 @@ const MeetingSeries = props => {
         renderConfigs={renderConfigs}
         viewActionClickHandler={handleCellClick.bind(this)}
         fitGrid='fit'
+        showHotlistButton={false}
       ></AmbientTemplateGrid>
 
       {/* <AmbientGridTemplate

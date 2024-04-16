@@ -201,6 +201,7 @@ const Meetings = (props) => {
         defaultSearchObject={defaultSearchObject}
         viewActionClickHandler={handleCellClick.bind(this)}
         fitGrid='fit'
+        showHotlistButton={false}
       ></AmbientTemplateGrid>
 
       {/* <AmbientGridTemplate
