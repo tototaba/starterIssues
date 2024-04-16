@@ -177,6 +177,7 @@ const MeetingSeries = props => {
         cellClickHandler={handleCellClick.bind(this)}
         cellClickHandlerX={handleCellClick.bind(this)}
         renderConfigs={renderConfigs}
+        viewActionClickHandler={handleCellClick.bind(this)}
         fitGrid='fit'
       ></AmbientTemplateGrid>
 

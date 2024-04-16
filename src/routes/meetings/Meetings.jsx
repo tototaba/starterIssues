@@ -199,6 +199,7 @@ const Meetings = (props) => {
         cellClickHandlerX={handleCellClick.bind(this)}
         renderConfigs={renderConfigs}
         defaultSearchObject={defaultSearchObject}
+        viewActionClickHandler={handleCellClick.bind(this)}
         fitGrid='fit'
       ></AmbientTemplateGrid>
 
