@@ -129,10 +129,10 @@ const MeetingSeries = props => {
   );
 
   const addMeetingSeriesButton = (
-    <PrimaryActionButton
-      onClick={() => setOpen(true)}
-      id="udpRecord-MeetingSeries-NewMeetingSeries"
-      udpRecordId="udpRecord-MeetingSeries-NewMeetingSeries"
+    <PrimaryActionButton 
+      onClick={() => setOpen(true)} 
+      id='udpRecord-MeetingSeries-NewMeetingSeries' 
+      udprecordid='udpRecord-MeetingSeries-NewMeetingSeries'
     >
       <Typography>New Meeting Series</Typography>
       <AddIcon />
@@ -160,8 +160,8 @@ const MeetingSeries = props => {
         title="Meeting Series"
         single
         buttonLabel={'New Meeting Series'}
-        id="udprecord-meetingseries-newmeetingseries"
-        udpRecordId="udprecord-meetingseries-newmeetingseries"
+        id='udpRecord-MeetingSeries-NewMeetingSeries'
+        udprecordid='udpRecord-MeetingSeries-NewMeetingSeries'
         handleClick={() => setOpen(true)}
       />
 

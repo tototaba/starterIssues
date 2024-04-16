@@ -181,8 +181,8 @@ const Meetings = (props) => {
         title="Meetings"
         single
         buttonLabel={'Add Meeting'}
-        id="udpRecord-Meetings-newMeetingSeries"
-        udpRecordId="udpRecord-meetingSeries-newMeetingSeries"
+        id="udpRecord-Meetings-NewMeetingSeries"
+        udprecordid="udpRecord-Meetings-NewMeetingSeries"
         handleClick={() => setOpen(true)}
       />
 

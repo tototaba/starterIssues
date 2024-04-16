@@ -191,6 +191,17 @@ const EditMeetingSideSheet = (props) => {
     }
   }, [meeting, updateInOutlook, outlookAccessToken, updateMeeting, updateMeetingWithOutlook, syncMeeting, fetchMeeting, handleSuccessSnackbar, handleErrorSnackbar, onClose]);
 
+  const formatDate = (datetimeStr) => {  
+    if (!datetimeStr) {  
+      return '';  
+    }  
+    const date = new Date(datetimeStr);  
+    const year = date.getFullYear();  
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-indexed  
+    const day = date.getDate().toString().padStart(2, '0');  
+    return `${year}-${month}-${day}`;  
+  };  
+
   return (
     <SideSheet
       title='Update Meeting'
@@ -252,7 +263,7 @@ const EditMeetingSideSheet = (props) => {
             id='Date'
             name='date'
             variant='outlined'
-            initialValue={meeting ? meeting.date : ''}
+            initialValue={meeting ? formatDate(meeting.date) : ''}
             udprecordid={'udpRecord-EditMeetingSideSheet-Date'}
           />
           <Field
