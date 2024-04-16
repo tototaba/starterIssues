@@ -7,6 +7,7 @@ import { PermissionContext } from './contexts/PermissionContext';
 import { AuthProviderWrapper, ThemeProvider } from 'unity-fluent-library';
 import { storeInitialPath } from './utils/redirect/LocalRedirectUrlStorage';
 import { storeInitialTenant } from './utils/storage/UnitySessionStorage';
+import './App.css';
 
 const queryClient = new QueryClient();
 

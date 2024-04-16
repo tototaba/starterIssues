@@ -1,0 +1,190 @@
+
+/* Theme color systems */
+
+/* Unity Theme */
+.unity-theme {
+  --primary-color: #0f62fe;
+  --secondary-color: #6c757d;
+  /* Additional Unity-specific variables */
+}
+
+/* SAP Theme */
+.sap-theme {
+  --primary-color: #0a5079;
+  --secondary-color: #f0f4f8;
+  /* Additional SAP-specific variables */
+}
+
+
+
+.hydrated {
+  overflow: hidden;
+}
+
+
+
+.spacing-13 {
+  margin: var(--component-spacing);
+}
+
+
+/* System colors  */
+
+:root {
+
+  /* Primary colors  */
+  --primary-color: #0a5079;
+  --secondary-color: #f0f4f8;
+
+
+   /* Secondary colors  */
+  --secondary-color: #7bdcb5;
+
+
+   /* Successful colors  */
+   --success-color-main: #7adcb5;
+   --success-color-light: #7adcb59d;
+
+
+    /* Warning colors  */
+  --warning-color-main: #ff832b;
+  --warning-color-light: rgb(239 218 219);
+
+
+   /* Error colors  */
+   --error-color-main: #8e1e24;
+   --error-color-light: rgb(239 218 219);
+
+
+    /* Disable colors  */
+    --disabled-color-main: rgb(210, 210, 210);
+
+
+    /* info colors  */
+    --info-color-main: rgb(52, 120, 176);
+
+
+
+
+
+     /* Divider colors  */
+    --divider-color: rgba(22, 22, 22, 0.5);
+
+   /* Grays   */
+    --gray-01: rgb(244, 244, 244);
+    --gray-02: rgb(224, 224, 224);
+    --gray-03: rgb(198, 198, 198);
+    --gray-04: rgb(168, 168, 168);
+    --gray-05: rgb(141, 141, 141);
+    --gray-06: rgb(111, 111, 111);
+    --gray-07: rgb(82, 82, 82);
+    --gray-08: rgb(57, 57, 57);
+    --gray-09: rgb(38, 38, 38);
+    --gray-10: rgb(22, 22, 22);
+
+
+
+  /* Accent colors  */
+    --accent-color: #d6dedf;
+    --accent-color-two: #6c7b8c;
+    --accent-color-three: #ecf2fc;
+    --accent-color-four: #3d7dfb;
+    --accent-color-five: #C7E4FC;
+    --accent-color-six: #FCD0CC;
+
+  /* 6c7b8c - accent from designs  */ 
+  /* Spacing variables */
+    --spacing-01: 0.125rem;
+    --spacing-02: 0.25rem;
+    --spacing-03: 0.5rem;
+    --spacing-04: 0.75rem;
+    --spacing-05: 1rem;
+    --spacing-06: 1.5rem;
+    --spacing-07: 2rem;
+    --spacing-08: 2.5rem;
+    --spacing-09: 3rem;
+    --spacing-10: 4rem;
+    --spacing-11: 5rem;
+    --spacing-12: 6rem;
+    --spacing-13: 8rem;
+  /* ... other variables */
+
+  
+}
+
+:root[data-theme='unity'] {
+  --primary-color: #0C2F50;
+  --secondary-color: #03BBC3;
+  /* ... other variables */
+}
+
+/* General spacing */
+.spacing-01 { margin: var(--spacing-01); }
+.spacing-02 { margin: var(--spacing-02); }
+/* ... */
+
+
+.padding-01 { padding: var(--spacing-01); }
+.padding-02 { padding: var(--spacing-02); }
+/* ... */
+.padding-13 { padding: var(--spacing-13); }
+
+/* Vertical margins */
+.mt-01 { margin-top: var(--spacing-01); }
+.mt-02 { margin-top: var(--spacing-02); }
+/* ... */
+.mt-13 { margin-top: var(--spacing-13); }
+
+.mb-01 { margin-bottom: var(--spacing-01); }
+.mb-02 { margin-bottom: var(--spacing-02); }
+/* ... */
+.mb-13 { margin-bottom: var(--spacing-13); }
+
+/* Vertical padding */
+.pt-01 { padding-top: var(--spacing-01); }
+.pt-02 { padding-top: var(--spacing-02); }
+/* ... */
+.pt-13 { padding-top: var(--spacing-13); }
+
+.pb-01 { padding-bottom: var(--spacing-01); }
+.pb-02 { padding-bottom: var(--spacing-02); }
+/* ... */
+.pb-13 { padding-bottom: var(--spacing-13); }
+
+
+.ag-body-vertical-scroll-viewport {
+  overflow-y: hidden !important;
+}
+
+.ag-body-viewport.ag-layout-normal {
+overflow-y: hidden !important;
+-webkit-overflow-scrolling: touch;
+}
+
+/* app.css - Try to match the exact hierarchy as seen in dev tools for increased specificity */
+.ag-grid .ag-body-viewport.ag-layout-normal .ag-body-vertical-scroll-viewport {
+  overflow-y: hidden !important;
+}
+
+
+/* src/global.css or src/app.css */
+.ag-body-viewport.ag-layout-normal {
+  overflow-y: hidden !important;
+}
+
+
+
+.ag-theme-material {
+
+  --ag-material-accent-color: #4a4446;
+}
+
+.ag-body-horizontal-scroll-viewport {
+  overflow-x: hidden;
+}
+
+
+.ag-center-cols-viewport {
+  width: 100%;
+  overflow-x: hidden;
+}
