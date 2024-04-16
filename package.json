@@ -118,6 +118,7 @@
     "react-grid-layout": "^1.2.0",
     "react-i18next": "^11.7.3",
     "react-jsx-parser": "^1.27.0",
+    "react-markdown": "^9.0.1",
     "react-query": "^3.39.1",
     "react-quill": "^2.0.0",
     "react-resizable": "^1.11.0",

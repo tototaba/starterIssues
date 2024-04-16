@@ -28,6 +28,7 @@ import { Add, Assignment, People, Edit, Delete } from '@mui/icons-material';
 import MeetingHeader from './MeetingHeader';
 import MinutesTab from './MinutesTab';
 import AttendeesTab from './AttendeesTab';
+import SummaryTab from './SummaryTab'
 import CorrespondenceTab from './CorrespondenceTab';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import { CreateCategory } from './Categories/categoriesHelpers';
@@ -51,6 +52,7 @@ const Meeting = props => {
   const [agendaSidesheetOpen, setAgendaSidesheetOpen] = useState(false);
   const [agendaOrderSidesheetOpen, setAgendaOrderSidesheetOpen] =
     useState(false);
+  const [summarySidesheetOpen, setSummarySidesheetOpen] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [selectedMeetingItem, setSelectedMeetingItem] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
@@ -82,6 +84,13 @@ const Meeting = props => {
       },
       buttonLabel: t('Update Agenda Order'),
     },
+    {
+      label: t('Summary'),
+      action: () => {
+        setSummarySidesheetOpen(true);
+      },
+      buttonLabel: t(''),
+    },
   ];
 
   const openMeetingItemSideSheet = () => {
@@ -104,6 +113,9 @@ const Meeting = props => {
         break;
       case 3: // Agenda
         setAgendaSidesheetOpen(true);
+        break;
+      case 4: // Summary 
+        setSummarySidesheetOpen(true);
         break;
       default:
       // Handle default case if necessary
@@ -144,6 +156,7 @@ const Meeting = props => {
     if (!meeting || !meetingItems) {
       return;
     }
+
     setHasMeetingItems(meetingItems[1].length > 0);
     const formattedDate = new Date(meeting.date).toLocaleDateString();
     setMeetingDate(formattedDate);
@@ -241,10 +254,20 @@ const Meeting = props => {
           icon: <Assignment/>,
           title: t('Update Agenda'),
         };
+      case 4: // Summary
+        if (!meeting.summary){
+          return 
+        }
+        return {
+          id: 'udpRecord-Meeting-primaryActionButtonSummary',
+          udprecordid: 'udpRecord-Meeting-primaryActionButtonSummary',
+          icon: <Assignment/>,
+          title: t('Edit Summary'),
+        };
       default:
         return null;
     }
-  }, [tabValue]);
+  }, [tabValue, meeting]);
 
   return (
     <Box>
@@ -324,6 +347,19 @@ const Meeting = props => {
           agendaOrderSidesheetOpen={agendaOrderSidesheetOpen}
           setAgendaOrderSidesheetOpen={setAgendaOrderSidesheetOpen}
           handleCategoryCreate={handleCategoryCreate}
+        />
+      </FluentTabPanel>
+
+      <FluentTabPanel value={tabValue} index={4}>
+        <SummaryTab
+          meeting={meeting}
+          categories={categories}
+          meetingId={meetingId}
+          meetingSeriesId={meetingSeriesId}
+          refetchMeeting={refetchMeeting}
+          summarySidesheetOpen={summarySidesheetOpen}
+          setSummarySidesheetOpen={setSummarySidesheetOpen}
+          useUser={useUser}
         />
       </FluentTabPanel>
     </Box>
