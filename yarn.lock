@@ -16275,10 +16275,10 @@ unity-ambient-x@24.0.2-beta.20:
     npmlink "^0.1.0"
     yalc "^1.0.0-pre.53"
 
-unity-fluent-library@24.0.5-alpha.1:
-  version "24.0.5-alpha.1"
-  resolved "https://registry.yarnpkg.com/unity-fluent-library/-/unity-fluent-library-24.0.5-alpha.1.tgz#10e3103cc9f88e8a4a38afd03f9eb5e7ccb9ac27"
-  integrity sha512-AyQKB1tX/TgXM3YXxAgR4mdAcL/mLz2RY1P7LGDinYBJRLigUHuCCGvCEa9jIKVUVKX+SFe2oRpTxEGUNqc0fw==
+unity-fluent-library@24.0.6-alpha.1:
+  version "24.0.6-alpha.1"
+  resolved "https://registry.yarnpkg.com/unity-fluent-library/-/unity-fluent-library-24.0.6-alpha.1.tgz#452736afcf45162e87ac44cfc9e5ed04c74b3dc0"
+  integrity sha512-6Ngw36TH919EkaBr6mISda3es4/9OgfM5C/32ItsmRnQZdPFvEcrileVF3Ya6KfvctGh8IIt7zyqIMwYzQzKuw==
   dependencies:
     "@ag-grid-community/core" "^26.2.0"
     "@ag-grid-community/csv-export" "^26.2.0"
