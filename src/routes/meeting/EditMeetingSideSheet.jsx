@@ -141,6 +141,7 @@ const EditMeetingSideSheet = (props) => {
       const endTimeStringFormated = fullendTime.toLocaleTimeString(undefined, options);
   
       const updatedMeeting = {
+        ... meeting,
         Date: values.date,
         Group_id: meeting.group_id,
         Id: meeting.id,
